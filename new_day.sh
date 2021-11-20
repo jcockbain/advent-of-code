@@ -21,7 +21,7 @@ cp -n -R template $GOROOT
 
 # copy input
 
-INPUT_URL="https://adventofcode.com/2020/day/1/input"
+INPUT_URL="https://adventofcode.com/$YEAR/day/$DAY/input"
 TEMP_INPUT="temp-input.txt"
 
 # "session cookie" must be given as input is per-user...
