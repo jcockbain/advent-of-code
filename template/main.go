@@ -2,7 +2,6 @@ package main
 
 import (
 	input "aoc2021/inpututils"
-	"os"
 	"time"
 
 	"fmt"
@@ -10,7 +9,7 @@ import (
 
 func main() {
 	start := time.Now()
-	input := getInput()
+	input := input.GetInputPath()
 
 	fmt.Println("--- Part One ---")
 	fmt.Println(Part1(input))
@@ -20,16 +19,6 @@ func main() {
 	fmt.Println("--- Part Two ---")
 	fmt.Println(Part2(input))
 	fmt.Printf("%s took %s seconds \n", "Part 2", time.Since(start)-elapsed)
-}
-
-func getInput() string {
-	var input string
-	if len(os.Args) > 1 {
-		input = os.Args[1]
-	} else {
-		input = "input.txt"
-	}
-	return input
 }
 
 func Part1(filename string) int {

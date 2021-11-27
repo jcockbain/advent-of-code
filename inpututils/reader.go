@@ -44,6 +44,17 @@ func ReadRaw(filename string) string {
 	return string(content)
 }
 
+// GetInputPath gets the input path
+func GetInputPath() string {
+	var input string
+	if len(os.Args) > 1 {
+		input = os.Args[1]
+	} else {
+		input = "input.txt"
+	}
+	return input
+}
+
 func toInt(s string) int {
 	converted, err := strconv.Atoi(s)
 	check(err)
