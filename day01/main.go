@@ -21,9 +21,8 @@ func main() {
 	fmt.Printf("%s took %s seconds \n", "Part 2", time.Since(start)-elapsed)
 }
 
-func Part1(filename string) int {
+func Part1(filename string) (increased int) {
 	nums := input.ReadNumbers(filename)
-	increased := 0
 	last := nums[0]
 	for _, i := range nums[1:] {
 		if i > last {
@@ -31,28 +30,25 @@ func Part1(filename string) int {
 		}
 		last = i
 	}
-	return increased
+	return
 }
 
-func Part2(filename string) int {
+func Part2(filename string) (increased int) {
 	nums := input.ReadNumbers(filename)
-	increased := 0
-	last := sum(nums[0:3])
-	numsLength := len(nums) - 2
-	for i := 3; i < numsLength; i++ {
+	last, numsLength := sum(nums[0:3]), len(nums)
+	for i := 3; i < numsLength - 2; i++ {
 		next := sum(nums[i : i+3])
 		if next > last {
 			increased += 1
 		}
 		last = next
 	}
-	return increased
+	return
 }
 
-func sum(nums []int) int {
-	ans := 0
+func sum(nums []int) (ans int) {
 	for _, a := range nums {
 		ans += a
 	}
-	return ans
+	return
 }
