@@ -47,9 +47,12 @@ func Part1(filename string) int {
 }
 
 func Part2(filename string) int {
-	lines := input.ReadLines(filename)
+	input := input.ReadLines(filename)
+	lines := make([]string, len(input))
+	copy(lines, input)
 	oxygenRating, co2Rating := 0, 0
-	for b := 0; b < len(lines[0]); b++ {
+	bitSize := len(input[0])
+	for b := 0; b < bitSize; b++ {
 		newLines := []string{}
 		ones, mostCommon := 0, 0
 		for _, l := range lines {
@@ -70,19 +73,19 @@ func Part2(filename string) int {
 		}
 		lines = newLines
 	}
-
-	lines2 := input.ReadLines(filename)
-	for b := 0; b < len(lines[0]); b++ {
+	lines = make([]string, len(input))
+	copy(lines, input)
+	for b := 0; b < bitSize; b++ {
 		newLines := []string{}
 		ones, leastCommon := 0, 1
-		for _, l := range lines2 {
+		for _, l := range lines {
 			c := string(l[b])
 			ones += getInt(c)
 		}
-		if ones >= len(lines2)-ones {
+		if ones >= len(lines)-ones {
 			leastCommon -= 1
 		}
-		for _, l := range lines2 {
+		for _, l := range lines {
 			c := string(l[b])
 			if getInt(c) == leastCommon {
 				newLines = append(newLines, l)
@@ -91,7 +94,7 @@ func Part2(filename string) int {
 		if len(newLines) == 1 {
 			co2Rating = convertBinaryToDecimal(getInt(newLines[0]))
 		}
-		lines2 = newLines
+		lines = newLines
 	}
 	return oxygenRating * co2Rating
 }
