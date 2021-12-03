@@ -29,8 +29,7 @@ func Part1(filename string) int {
 	gammaRate, epsilonRate := 0, 0
 	for _, line := range lines {
 		for pos := len(line) - 1; pos >= 0; pos -= 1 {
-			c := string(line[pos])
-			if getInt(c) == 1 {
+			if getInt(string(line[pos])) == 1 {
 				ones[len(line)-1-pos] += 1
 			}
 		}
@@ -60,7 +59,7 @@ func Part2(filename string) int {
 			}
 			if compFunc(ones, len(lines)-ones) {
 				target += 1
-			} 
+			}
 			for _, l := range lines {
 				if getInt(string(l[b])) == target {
 					newLines = append(newLines, l)
