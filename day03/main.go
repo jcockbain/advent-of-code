@@ -48,54 +48,34 @@ func Part1(filename string) int {
 
 func Part2(filename string) int {
 	input := input.ReadLines(filename)
-	lines := make([]string, len(input))
-	copy(lines, input)
-	oxygenRating, co2Rating := 0, 0
-	bitSize := len(input[0])
-	for b := 0; b < bitSize; b++ {
-		newLines := []string{}
-		ones, mostCommon := 0, 0
-		for _, l := range lines {
-			c := string(l[b])
-			ones += getInt(c)
-		}
-		if ones >= len(lines)-ones {
-			mostCommon += 1
-		}
-		for _, l := range lines {
-			c := string(l[b])
-			if getInt(c) == mostCommon {
-				newLines = append(newLines, l)
+
+	getRating := func(compFunc func(int, int) bool) int {
+		lines := make([]string, len(input))
+		copy(lines, input)
+		for b := 0; b < len(input[0]); b++ {
+			newLines := []string{}
+			ones, target := 0, 0
+			for _, l := range lines {
+				ones += getInt(string(l[b]))
 			}
-		}
-		if len(newLines) == 1 {
-			oxygenRating = convertBinaryToDecimal(getInt(newLines[0]))
-		}
-		lines = newLines
-	}
-	lines = make([]string, len(input))
-	copy(lines, input)
-	for b := 0; b < bitSize; b++ {
-		newLines := []string{}
-		ones, leastCommon := 0, 1
-		for _, l := range lines {
-			c := string(l[b])
-			ones += getInt(c)
-		}
-		if ones >= len(lines)-ones {
-			leastCommon -= 1
-		}
-		for _, l := range lines {
-			c := string(l[b])
-			if getInt(c) == leastCommon {
-				newLines = append(newLines, l)
+			if compFunc(ones, len(lines)-ones) {
+				target += 1
+			} 
+			for _, l := range lines {
+				if getInt(string(l[b])) == target {
+					newLines = append(newLines, l)
+				}
 			}
+			if len(newLines) == 1 {
+				return convertBinaryToDecimal(getInt(newLines[0]))
+			}
+			lines = newLines
 		}
-		if len(newLines) == 1 {
-			co2Rating = convertBinaryToDecimal(getInt(newLines[0]))
-		}
-		lines = newLines
+		panic("no answer found")
 	}
+
+	oxygenRating := getRating(func(i1, i2 int) bool { return i1 >= i2 })
+	co2Rating := getRating(func(i1, i2 int) bool { return i1 < i2 })
 	return oxygenRating * co2Rating
 }
 
