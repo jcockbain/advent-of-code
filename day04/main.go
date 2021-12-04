@@ -45,7 +45,7 @@ func Part2(filename string) int {
 	for _, n := range numbersCalled {
 		for _, b := range boards {
 			b.processNum(n)
-			if allComplete(boards) {
+			if allBoardsComplete(boards) {
 				return n * b.getScore()
 			}
 		}
@@ -53,41 +53,11 @@ func Part2(filename string) int {
 	panic("no answer!")
 }
 
-func processInput(input []string) ([]int, []*board) {
-	numbersCalled := mapToInt(strings.Split(input[0], ","), getInt)
-	boards := []*board{}
-	currentRows := [][]int{}
-	for _, inp := range input[2:] {
-		if inp == "" {
-			boards = append(boards, newBoard(currentRows))
-			currentRows = [][]int{}
-		} else {
-			row := mapToInt(strings.Fields(inp), getInt)
-			currentRows = append(currentRows, row)
-		}
-	}
-	boards = append(boards, newBoard(currentRows))
-	return numbersCalled, boards
-}
-
 type board [][]*bingoVal
 
 type bingoVal struct {
 	val    int
 	called bool
-}
-
-func newBoard(rows [][]int) *board {
-	b := make(board, len(rows))
-	for i := range b {
-		b[i] = make([]*bingoVal, len(rows[0]))
-	}
-	for d, row := range rows {
-		for w, val := range row {
-			b[d][w] = &bingoVal{val, false}
-		}
-	}
-	return &b
 }
 
 func (b board) processNum(i int) {
@@ -127,6 +97,33 @@ func (b board) getColumn(index int) (c []*bingoVal) {
 	return
 }
 
+func processInput(input []string) ([]int, []*board) {
+	numbersCalled := mapToInt(strings.Split(input[0], ","))
+	boards, currentRows := []*board{}, [][]int{}
+	for _, inp := range input[2:] {
+		if inp == "" {
+			boards = append(boards, newBoard(currentRows))
+			currentRows = [][]int{}
+		} else {
+			currentRows = append(currentRows, mapToInt(strings.Fields(inp)))
+		}
+	}
+	return numbersCalled, append(boards, newBoard(currentRows))
+}
+
+func newBoard(rows [][]int) *board {
+	b := make(board, len(rows))
+	for i := range b {
+		b[i] = make([]*bingoVal, len(rows[0]))
+	}
+	for d, row := range rows {
+		for w, val := range row {
+			b[d][w] = &bingoVal{val, false}
+		}
+	}
+	return &b
+}
+
 func allValsCalled(b []*bingoVal) bool {
 	for _, val := range b {
 		if !val.called {
@@ -147,19 +144,19 @@ func (b board) getScore() (s int) {
 	return
 }
 
-func allComplete(bds []*board) bool {
+func allBoardsComplete(bds []*board) bool {
 	for _, b := range bds {
-		if !b.isComplete(){
+		if !b.isComplete() {
 			return false
 		}
 	}
 	return true
 }
 
-func mapToInt(vs []string, f func(string) int) []int {
+func mapToInt(vs []string) []int {
 	vsm := make([]int, len(vs))
 	for i, v := range vs {
-		vsm[i] = f(v)
+		vsm[i] = getInt(v)
 	}
 	return vsm
 }
