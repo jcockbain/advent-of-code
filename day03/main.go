@@ -15,23 +15,23 @@ func main() {
 	input := input.GetInputPath()
 
 	fmt.Println("--- Part One ---")
-	fmt.Println(Part1(input))
+	fmt.Println(part1(input))
 	elapsed := time.Since(start)
 	fmt.Printf("%s took %s seconds \n", "Part 1", elapsed)
 
 	fmt.Println("--- Part Two ---")
-	fmt.Println(Part2(input))
+	fmt.Println(part2(input))
 	fmt.Printf("%s took %s seconds \n", "Part 2", time.Since(start)-elapsed)
 }
 
-func Part1(filename string) int {
+func part1(filename string) int {
 	lines := input.ReadLines(filename)
 	ones := map[int]int{}
 	gammaRate, epsilonRate := 0, 0
 	for _, line := range lines {
-		for pos := len(line) - 1; pos >= 0; pos -= 1 {
+		for pos := len(line) - 1; pos >= 0; pos-- {
 			if getInt(string(line[pos])) == 1 {
-				ones[len(line)-1-pos] += 1
+				ones[len(line)-1-pos]++
 			}
 		}
 	}
@@ -46,7 +46,7 @@ func Part1(filename string) int {
 	return gammaRate * epsilonRate
 }
 
-func Part2(filename string) int {
+func part2(filename string) int {
 	input := input.ReadLines(filename)
 
 	getRating := func(compFunc func(int, int) bool) int {
@@ -59,7 +59,7 @@ func Part2(filename string) int {
 				ones += getInt(string(l[b]))
 			}
 			if compFunc(ones, len(lines)-ones) {
-				target += 1
+				target++
 			}
 			for _, l := range lines {
 				if getInt(string(l[b])) == target {

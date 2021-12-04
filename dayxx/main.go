@@ -13,16 +13,16 @@ func main() {
 	input := input.GetInputPath()
 
 	fmt.Println("--- Part One ---")
-	fmt.Println(Part1(input))
+	fmt.Println(part1(input))
 	elapsed := time.Since(start)
 	fmt.Printf("%s took %s seconds \n", "Part 1", elapsed)
 
 	fmt.Println("--- Part Two ---")
-	fmt.Println(Part2(input))
+	fmt.Println(part2(input))
 	fmt.Printf("%s took %s seconds \n", "Part 2", time.Since(start)-elapsed)
 }
 
-func Part1(filename string) int {
+func part1(filename string) int {
 	nums := input.ReadNumbers(filename)
 	sum := 0
 	for _, i := range nums {
@@ -31,6 +31,6 @@ func Part1(filename string) int {
 	return sum
 }
 
-func Part2(filename string) int {
+func part2(filename string) int {
 	return 12
 }

@@ -22,7 +22,7 @@ func ReadLines(filename string) []string {
 	return lines
 }
 
-// ReadLines reads from the filepath and attempts to convert each line to an int
+// ReadNumbers reads from the filepath and attempts to convert each line to an int
 func ReadNumbers(filename string) []int {
 	file, err := os.Open(filename)
 	check(err)
