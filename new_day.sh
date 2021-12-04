@@ -12,7 +12,7 @@ else DISPLAY_DAY=$DAY
 fi
 
 GOROOT=day${DISPLAY_DAY}
-cp -n -R template $GOROOT
+cp -n -R dayxx $GOROOT
 
 INPUT_URL="https://adventofcode.com/$YEAR/day/$DAY/input"
 TEMP_INPUT="temp-input.txt"

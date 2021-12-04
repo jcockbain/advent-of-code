@@ -2,9 +2,9 @@ package inpututils
 
 import (
 	"bufio"
+	"io/ioutil"
 	"os"
 	"strconv"
-	"io/ioutil"
 )
 
 // ReadLines reads from the filepath and outputs array of lines as strings
@@ -60,7 +60,6 @@ func toInt(s string) int {
 	check(err)
 	return converted
 }
-
 
 func check(err error) {
 	if err != nil {
