@@ -53,11 +53,38 @@ func Part2(filename string) int {
 	panic("no answer!")
 }
 
+func processInput(input []string) ([]int, []*board) {
+	numbersCalled := mapToInt(strings.Split(input[0], ","))
+	boards, currentRows := []*board{}, [][]int{}
+	for _, inp := range input[2:] {
+		if inp == "" {
+			boards = append(boards, newBoard(currentRows))
+			currentRows = [][]int{}
+		} else {
+			currentRows = append(currentRows, mapToInt(strings.Fields(inp)))
+		}
+	}
+	return numbersCalled, append(boards, newBoard(currentRows))
+}
+
 type board [][]*bingoVal
 
 type bingoVal struct {
 	val    int
 	called bool
+}
+
+func newBoard(rows [][]int) *board {
+	b := make(board, len(rows))
+	for i := range b {
+		b[i] = make([]*bingoVal, len(rows[0]))
+	}
+	for d, row := range rows {
+		for w, val := range row {
+			b[d][w] = &bingoVal{val, false}
+		}
+	}
+	return &b
 }
 
 func (b board) processNum(i int) {
@@ -97,42 +124,6 @@ func (b board) getColumn(index int) (c []*bingoVal) {
 	return
 }
 
-func processInput(input []string) ([]int, []*board) {
-	numbersCalled := mapToInt(strings.Split(input[0], ","))
-	boards, currentRows := []*board{}, [][]int{}
-	for _, inp := range input[2:] {
-		if inp == "" {
-			boards = append(boards, newBoard(currentRows))
-			currentRows = [][]int{}
-		} else {
-			currentRows = append(currentRows, mapToInt(strings.Fields(inp)))
-		}
-	}
-	return numbersCalled, append(boards, newBoard(currentRows))
-}
-
-func newBoard(rows [][]int) *board {
-	b := make(board, len(rows))
-	for i := range b {
-		b[i] = make([]*bingoVal, len(rows[0]))
-	}
-	for d, row := range rows {
-		for w, val := range row {
-			b[d][w] = &bingoVal{val, false}
-		}
-	}
-	return &b
-}
-
-func allValsCalled(b []*bingoVal) bool {
-	for _, val := range b {
-		if !val.called {
-			return false
-		}
-	}
-	return true
-}
-
 func (b board) getScore() (s int) {
 	for _, row := range b {
 		for _, bv := range row {
@@ -142,6 +133,15 @@ func (b board) getScore() (s int) {
 		}
 	}
 	return
+}
+
+func allValsCalled(b []*bingoVal) bool {
+	for _, val := range b {
+		if !val.called {
+			return false
+		}
+	}
+	return true
 }
 
 func allBoardsComplete(bds []*board) bool {
