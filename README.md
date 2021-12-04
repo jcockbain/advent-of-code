@@ -19,9 +19,10 @@ To fetch the input, and create a template dir for each day:
 To then run the solutions: 
 
 ```go
+// using day1 as an example
 cd day01 
 
-// defaults to input.txt in current dir
+// defaults to using input.txt in the current dir
 go run main.go
 
 // run with custom input (I normally use the test input given with the problem)
