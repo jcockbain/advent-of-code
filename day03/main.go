@@ -1,7 +1,7 @@
 package main
 
 import (
-	input "aoc2021/inpututils"
+	input "advent-of-code-2021/inpututils"
 	"math"
 	"strconv"
 	"time"

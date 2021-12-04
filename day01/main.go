@@ -1,7 +1,7 @@
 package main
 
 import (
-	input "aoc2021/inpututils"
+	input "advent-of-code-2021/inpututils"
 	"time"
 
 	"fmt"
@@ -36,7 +36,7 @@ func Part1(filename string) (increased int) {
 func Part2(filename string) (increased int) {
 	nums := input.ReadNumbers(filename)
 	last, numsLength := sum(nums[0:3]), len(nums)
-	for i := 3; i < numsLength - 2; i++ {
+	for i := 3; i < numsLength-2; i++ {
 		next := sum(nums[i : i+3])
 		if next > last {
 			increased += 1
