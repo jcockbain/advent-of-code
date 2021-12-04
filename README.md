@@ -1,6 +1,7 @@
 # 🎄 advent-of-code-2021 🎄
 
 ![Go](https://github.com/jcockbain/advent-of-code-2021/workflows/Go/badge.svg)
+[![Go Report Card](https://goreportcard.com/badge/github.com/jcockbain/advent-of-code-2021)](https://goreportcard.com/report/github.com/jcockbain/advent-of-code-2021)
 
 Solutions to 2021 Advent of Code. 
 
