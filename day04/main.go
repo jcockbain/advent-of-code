@@ -1,9 +1,10 @@
 package main
 
 import (
-	input "advent-of-code-2021/inpututils"
 	"strconv"
 	"time"
+
+	input "github.com/jcockbain/advent-of-code-2021/inpututils"
 
 	"fmt"
 	"strings"

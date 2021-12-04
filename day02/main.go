@@ -1,8 +1,9 @@
 package main
 
 import (
-	input "advent-of-code-2021/inpututils"
 	"time"
+
+	input "github.com/jcockbain/advent-of-code-2021/inpututils"
 
 	"fmt"
 	"regexp"
