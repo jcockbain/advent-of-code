@@ -13,13 +13,18 @@ Solutions to 2021 Advent of Code.
 To fetch the input, and create a template dir for each day: 
 
 ```shell
-./new_day 2021 {day}
+./new_day 2021 {day1}
 ```
 
 To then run the solutions: 
 
 ```go
-go run day01/main.go
+cd day01 
 
-go test day01
+// defaults to input.txt in current dir
+go run main.go
+
+// run with custom input (I normally use the test input given with the problem)
+go run main.go test1.txt
+
 ```
