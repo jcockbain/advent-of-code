@@ -33,18 +33,13 @@ func part1(filename string) int {
 	depth, forward := 0, 0
 	for _, line := range lines {
 		parts := re.FindStringSubmatch(line)
-		w, err := strconv.Atoi(parts[2])
-		if err != nil {
-			panic(err)
-		}
-		dir := parts[1]
-		if dir == "forward" {
+		w := stringToInt(parts[2])
+		switch parts[1] {
+		case "forward":
 			forward += w
-		}
-		if dir == "up" {
+		case "up":
 			depth -= w
-		}
-		if dir == "down" {
+		case "down":
 			depth += w
 		}
 	}
@@ -56,21 +51,24 @@ func part2(filename string) int {
 	depth, forward, aim := 0, 0, 0
 	for _, line := range lines {
 		parts := re.FindStringSubmatch(line)
-		w, err := strconv.Atoi(parts[2])
-		if err != nil {
-			panic(err)
-		}
-		dir := parts[1]
-		if dir == "forward" {
+		w := stringToInt(parts[2])
+		switch parts[1] {
+		case "forward":
 			forward += w
 			depth += (aim * w)
-		}
-		if dir == "up" {
+		case "up":
 			aim -= w
-		}
-		if dir == "down" {
+		case "down":
 			aim += w
 		}
 	}
 	return depth * forward
+}
+
+func stringToInt(s string) int {
+	i, err := strconv.Atoi(s)
+	if err != nil {
+		panic(err)
+	}
+	return i
 }
