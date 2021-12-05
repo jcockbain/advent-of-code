@@ -76,7 +76,7 @@ type board map[pos]int
 func (b board) getPoints() (points int) {
 	for _, v := range b {
 		if v >= 2 {
-			points += 1
+			points++
 		}
 	}
 	return
@@ -91,7 +91,7 @@ func part1(filename string) int {
 		p1, p2 := pos{x1, y1}, pos{x2, y2}
 		travelledOver := append(p1.getHorizontalsWith(p2), p1.getVerticalsWith(p2)...)
 		for _, p := range travelledOver {
-			b[p] += 1
+			b[p]++
 		}
 	}
 	return b.getPoints()
@@ -106,7 +106,7 @@ func part2(filename string) int {
 		p1, p2 := pos{x1, y1}, pos{x2, y2}
 		travelledOver := append(append(p1.getHorizontalsWith(p2), p1.getVerticalsWith(p2)...), p1.getDiagsWith(p2)...)
 		for _, p := range travelledOver {
-			b[p] += 1
+			b[p]++
 		}
 	}
 	return b.getPoints()
