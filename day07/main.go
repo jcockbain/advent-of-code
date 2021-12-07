@@ -27,8 +27,7 @@ func main() {
 }
 
 func part1(filename string) int {
-	inp := input.ReadSlice(filename)
-	nums := mapToInts(inp)
+	nums := mapToInts(input.ReadSlice(filename))
 	ans := maxInt
 	for pos := minSlice(nums); pos <= maxSlice(nums); pos++ {
 		total := 0
@@ -41,8 +40,7 @@ func part1(filename string) int {
 }
 
 func part2(filename string) int {
-	inp := input.ReadSlice(filename)
-	nums := mapToInts(inp)
+	nums := mapToInts(input.ReadSlice(filename))
 	ans := maxInt
 	for pos := minSlice(nums); pos <= maxSlice(nums); pos++ {
 		total := 0
@@ -72,11 +70,9 @@ func min(a, b int) int {
 }
 
 func minSlice(s []int) int {
-	m := int(maxInt)
+	m := maxInt
 	for _, x := range s {
-		if x < m {
-			m = x
-		}
+		m = min(m, x)
 	}
 	return m
 }
