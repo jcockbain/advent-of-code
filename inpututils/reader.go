@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"os"
 	"strconv"
+	"strings"
 )
 
 // ReadLines reads from the filepath and outputs array of lines as strings
@@ -42,6 +43,12 @@ func ReadRaw(filename string) string {
 	content, err := ioutil.ReadFile(filename)
 	check(err)
 	return string(content)
+}
+
+// ReadSlice attempts to create a slice of strings for a comma-seperated txt file
+func ReadSlice(filename string) []string {
+	content := ReadRaw(filename)
+	return append([]string{}, strings.Split(content, ",")...)
 }
 
 // GetInputPath gets the input path
