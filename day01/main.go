@@ -4,7 +4,7 @@ import (
 	_ "embed"
 	"fmt"
 
-	inputUtils "github.com/jcockbain/advent-of-code-2021/inpututils"
+	utils "github.com/jcockbain/advent-of-code-2021/utils"
 )
 
 var (
@@ -25,7 +25,7 @@ func main() {
 }
 
 func part1() (increased int) {
-	nums := inputUtils.GetInts(input)
+	nums := utils.GetInts(input)
 	last := nums[0]
 	for _, i := range nums[1:] {
 		if i > last {
@@ -37,7 +37,7 @@ func part1() (increased int) {
 }
 
 func part2() (increased int) {
-	nums := inputUtils.GetInts(input)
+	nums := utils.GetInts(input)
 	last, numsLength := sum(nums[0:3]), len(nums)
 	for i := 3; i < numsLength-2; i++ {
 		next := sum(nums[i : i+3])

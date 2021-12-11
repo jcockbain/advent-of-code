@@ -1,35 +1,34 @@
 package main
 
 import (
-	"time"
-
-	input "github.com/jcockbain/advent-of-code-2021/inpututils"
-
+	_ "embed"
 	"fmt"
 	"regexp"
 	"strconv"
+
+	"github.com/jcockbain/advent-of-code-2021/utils"
 )
 
 var (
-	re = regexp.MustCompile(`(.+) (\d+)`)
+	re        = regexp.MustCompile(`(.+) (\d+)`)
+	benchmark = false
 )
 
+//go:embed input.txt
+var input string
+
 func main() {
-	start := time.Now()
-	input := input.GetInputPath()
+	p1 := part1()
+	p2 := part2()
 
-	fmt.Println("--- Part One ---")
-	fmt.Println(part1(input))
-	elapsed := time.Since(start)
-	fmt.Printf("%s took %s seconds \n", "Part 1", elapsed)
-
-	fmt.Println("--- Part Two ---")
-	fmt.Println(part2(input))
-	fmt.Printf("%s took %s seconds \n", "Part 2", time.Since(start)-elapsed)
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
 
-func part1(filename string) int {
-	lines := input.ReadLines(filename)
+func part1() int {
+	lines := utils.GetLines(input)
 	depth, forward := 0, 0
 	for _, line := range lines {
 		parts := re.FindStringSubmatch(line)
@@ -46,8 +45,8 @@ func part1(filename string) int {
 	return depth * forward
 }
 
-func part2(filename string) int {
-	lines := input.ReadLines(filename)
+func part2() int {
+	lines := utils.GetLines(input)
 	depth, forward, aim := 0, 0, 0
 	for _, line := range lines {
 		parts := re.FindStringSubmatch(line)

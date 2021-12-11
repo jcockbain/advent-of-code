@@ -1,10 +1,9 @@
 package main
 
 import (
+	_ "embed"
 	"strconv"
-	"time"
-
-	input "github.com/jcockbain/advent-of-code-2021/inpututils"
+	"strings"
 
 	"fmt"
 )
@@ -12,22 +11,25 @@ import (
 const MaxUint = ^uint(0)
 const maxInt = int(MaxUint >> 1)
 
+var (
+	benchmark = false
+)
+
+//go:embed input.txt
+var input string
+
 func main() {
-	start := time.Now()
-	input := input.GetInputPath()
+	p1 := part1()
+	p2 := part2()
 
-	fmt.Println("--- Part One ---")
-	fmt.Println(part1(input))
-	elapsed := time.Since(start)
-	fmt.Printf("%s took %s seconds \n", "Part 1", elapsed)
-
-	fmt.Println("--- Part Two ---")
-	fmt.Println(part2(input))
-	fmt.Printf("%s took %s seconds \n", "Part 2", time.Since(start)-elapsed)
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
 
-func part1(filename string) int {
-	nums := mapToInts(input.ReadSlice(filename))
+func part1() int {
+	nums := mapToInts(strings.Split(input, ","))
 	ans := maxInt
 	for pos := minSlice(nums); pos <= maxSlice(nums); pos++ {
 		total := 0
@@ -39,8 +41,8 @@ func part1(filename string) int {
 	return ans
 }
 
-func part2(filename string) int {
-	nums := mapToInts(input.ReadSlice(filename))
+func part2() int {
+	nums := mapToInts(strings.Split(input, ","))
 	ans := maxInt
 	for pos := minSlice(nums); pos <= maxSlice(nums); pos++ {
 		total := 0

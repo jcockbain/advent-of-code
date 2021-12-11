@@ -1,21 +1,29 @@
 package main
 
 import (
+	_ "embed"
 	"sort"
 	"strconv"
 
-	input "github.com/jcockbain/advent-of-code-2021/inpututils"
-
 	"fmt"
+
+	"github.com/jcockbain/advent-of-code-2021/utils"
 )
 
+var (
+	benchmark = false
+)
+
+//go:embed input.txt
+var input string
+
 func main() {
-	input := input.GetInputPath()
-	p1, p2 := part1(input)
-	fmt.Println("--- Part One ---")
-	fmt.Println(p1)
-	fmt.Println("--- Part Two ---")
-	fmt.Println(p2)
+	p1, p2 := part1()
+
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
 
 type pos struct{ r, c int }
@@ -41,8 +49,8 @@ func getNeighbourPos(p pos) (res []pos) {
 	return
 }
 
-func part1(filename string) (int, int) {
-	lines := input.ReadLines(filename)
+func part1() (int, int) {
+	lines := utils.GetLines(input)
 	m := posMap{}
 	for r, line := range lines {
 		for c, v := range line {

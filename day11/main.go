@@ -1,31 +1,31 @@
 package main
 
 import (
-	"os"
+	_ "embed"
+
 	"strconv"
 	"strings"
-	"time"
-
-	input "github.com/jcockbain/advent-of-code-2021/inpututils"
 
 	"fmt"
+
+	"github.com/jcockbain/advent-of-code-2021/utils"
 )
 
-func main() {
-	start := time.Now()
-	input := input.GetInputPath()
-	steps := 10
-	if len(os.Args) >= 3 {
-		steps = strToInt(os.Args[2])
-	}
-	fmt.Println("--- Part One ---")
-	fmt.Println(part1(input, steps))
-	elapsed := time.Since(start)
-	fmt.Printf("%s took %s seconds \n", "Part 1", elapsed)
+var (
+	benchmark = false
+)
 
-	fmt.Println("--- Part Two ---")
-	fmt.Println(part2(input))
-	fmt.Printf("%s took %s seconds \n", "Part 2", time.Since(start)-elapsed)
+//go:embed input.txt
+var input string
+
+func main() {
+	p1 := part1(100)
+	p2 := part2()
+
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
 
 type pos struct{ r, c int }
@@ -102,8 +102,8 @@ func (o octopi) drawMap() {
 	}
 }
 
-func part1(filename string, steps int) int {
-	lines := input.ReadLines(filename)
+func part1(steps int) int {
+	lines := utils.GetLines(input)
 	o := octopi{}
 	for r, l := range lines {
 		for c, v := range l {
@@ -126,8 +126,8 @@ func part1(filename string, steps int) int {
 	return totalFlashes
 }
 
-func part2(filename string) int {
-	lines := input.ReadLines(filename)
+func part2() int {
+	lines := utils.GetLines(input)
 	o := octopi{}
 	for r, l := range lines {
 		for c, v := range l {

@@ -1,27 +1,35 @@
 package main
 
 import (
+	_ "embed"
+
 	"regexp"
 	"sort"
 	"strings"
 
-	input "github.com/jcockbain/advent-of-code-2021/inpututils"
+	"github.com/jcockbain/advent-of-code-2021/utils"
 
 	"fmt"
 	"strconv"
 )
 
+var (
+	re        = regexp.MustCompile(`(.+)\|(.+)`)
+	benchmark = false
+)
+
+//go:embed input.txt
+var input string
+
 func main() {
-	input := input.GetInputPath()
+	p1 := part1()
+	p2 := part2()
 
-	fmt.Println("--- Part One ---")
-	fmt.Println(part1(input))
-
-	fmt.Println("--- Part Two ---")
-	fmt.Println(part2(input))
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
-
-var re = regexp.MustCompile(`(.+)\|(.+)`)
 
 var display = map[string]string{
 	"abcefg":  "0",
@@ -43,8 +51,8 @@ var numLightsToVals = map[int]int{
 	7: 8,
 }
 
-func part1(filename string) int {
-	lines := input.ReadLines(filename)
+func part1() int {
+	lines := utils.GetLines(input)
 	totalUnique := 0
 	for _, l := range lines {
 		parts := re.FindStringSubmatch(l)
@@ -86,8 +94,8 @@ func (p positionMap) getKey(val string) string {
 	panic("no key!")
 }
 
-func part2(filename string) int {
-	lines := input.ReadLines(filename)
+func part2() int {
+	lines := utils.GetLines(input)
 	total := 0
 	for _, l := range lines {
 		parts := re.FindStringSubmatch(l)

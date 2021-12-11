@@ -1,33 +1,35 @@
 package main
 
 import (
+	_ "embed"
+
 	"strconv"
 	"strings"
-	"time"
-
-	input "github.com/jcockbain/advent-of-code-2021/inpututils"
 
 	"fmt"
 )
 
-func main() {
-	start := time.Now()
-	input := input.GetInputPath()
-	fmt.Println("--- Part One ---")
-	fmt.Println(part1(input, 80))
-	elapsed := time.Since(start)
-	fmt.Printf("%s took %s seconds \n", "Part 1", elapsed)
+var (
+	benchmark = false
+)
 
-	fmt.Println("--- Part Two ---")
-	fmt.Println(part1(input, 256))
-	fmt.Printf("%s took %s seconds \n", "Part 2", time.Since(start)-elapsed)
+//go:embed input.txt
+var input string
+
+func main() {
+	p1 := part1(80)
+	p2 := part1(256)
+
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
 
 // same code used for part one and two
-func part1(filename string, days int) int {
-	inp := input.ReadRaw(filename)
+func part1(days int) int {
 	fish := map[int]int{}
-	for _, c := range strings.Split(inp, ",") {
+	for _, c := range strings.Split(input, ",") {
 		fish[stringToInt(c)]++
 	}
 

@@ -1,13 +1,31 @@
 package main
 
 import (
-	"sort"
-	"time"
+	_ "embed"
 
-	input "github.com/jcockbain/advent-of-code-2021/inpututils"
+	"sort"
 
 	"fmt"
+
+	"github.com/jcockbain/advent-of-code-2021/utils"
 )
+
+var (
+	benchmark = false
+)
+
+//go:embed input.txt
+var input string
+
+func main() {
+	p1 := part1()
+	p2 := part2()
+
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+		fmt.Printf("Part 2: %d\n", p2)
+	}
+}
 
 type Stack []string
 
@@ -35,20 +53,6 @@ func (s *Stack) Pop() (string, bool) {
 		*s = (*s)[:index]      // Remove it from the stack by slicing it off.
 		return element, true
 	}
-}
-
-func main() {
-	start := time.Now()
-	input := input.GetInputPath()
-
-	fmt.Println("--- Part One ---")
-	fmt.Println(part1(input))
-	elapsed := time.Since(start)
-	fmt.Printf("%s took %s seconds \n", "Part 1", elapsed)
-
-	fmt.Println("--- Part Two ---")
-	fmt.Println(part2(input))
-	fmt.Printf("%s took %s seconds \n", "Part 2", time.Since(start)-elapsed)
 }
 
 type bracketsMap map[string]string
@@ -83,8 +87,8 @@ var value2 = map[string]int{
 	"<": 4,
 }
 
-func part1(filename string) int {
-	lines := input.ReadLines(filename)
+func part1() int {
+	lines := utils.GetLines(input)
 	total := 0
 	for _, l := range lines {
 		s := Stack{}
@@ -104,8 +108,8 @@ func part1(filename string) int {
 	return total
 }
 
-func part2(filename string) int {
-	lines := input.ReadLines(filename)
+func part2() int {
+	lines := utils.GetLines(input)
 	scores := []int{}
 	for _, l := range lines {
 		s := Stack{}

@@ -1,31 +1,33 @@
 package main
 
 import (
+	_ "embed"
+
 	"regexp"
 	"strconv"
-	"time"
-
-	input "github.com/jcockbain/advent-of-code-2021/inpututils"
 
 	"fmt"
+
+	"github.com/jcockbain/advent-of-code-2021/utils"
 )
 
+var (
+	re        = regexp.MustCompile(`(\d+),(\d+) -> (\d+),(\d+)`)
+	benchmark = false
+)
+
+//go:embed input.txt
+var input string
+
 func main() {
-	start := time.Now()
-	input := input.GetInputPath()
-	// input := "test1.txt"
+	p1 := part1()
+	p2 := part2()
 
-	fmt.Println("--- Part One ---")
-	fmt.Println(part1(input))
-	elapsed := time.Since(start)
-	fmt.Printf("%s took %s seconds \n", "Part 1", elapsed)
-
-	fmt.Println("--- Part Two ---")
-	fmt.Println(part2(input))
-	fmt.Printf("%s took %s seconds \n", "Part 2", time.Since(start)-elapsed)
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
-
-var re = regexp.MustCompile(`(\d+),(\d+) -> (\d+),(\d+)`)
 
 type pos struct{ x, y int }
 
@@ -82,8 +84,8 @@ func (b board) getPoints() (points int) {
 	return
 }
 
-func part1(filename string) int {
-	inp := input.ReadLines(filename)
+func part1() int {
+	inp := utils.GetLines(input)
 	b := board{}
 	for _, line := range inp {
 		parts := re.FindStringSubmatch(line)
@@ -97,8 +99,8 @@ func part1(filename string) int {
 	return b.getPoints()
 }
 
-func part2(filename string) int {
-	inp := input.ReadLines(filename)
+func part2() int {
+	inp := utils.GetLines(input)
 	b := board{}
 	for _, line := range inp {
 		parts := re.FindStringSubmatch(line)

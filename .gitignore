@@ -1,2 +1,4 @@
 .vscode
 .github/config
+
+benchmarks/results
