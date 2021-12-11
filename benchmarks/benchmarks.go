@@ -24,7 +24,7 @@ func main() {
 		panic(err)
 	}
 	table := getTable(benchmarks)
-	ioutil.WriteFile("benchmarks.md", []byte(table), 0644)
+	ioutil.WriteFile("README.md", []byte(table), 0644)
 }
 
 func getTable(benchmarks benchmarkData) string {
