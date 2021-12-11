@@ -45,7 +45,7 @@ func (p pos) getNeighbours() []pos {
 type octopi map[pos]int
 
 func (o octopi) height() (h int) {
-	for pos, _ := range o {
+	for pos := range o {
 		if pos.r > h {
 			h = pos.r
 		}
@@ -54,7 +54,7 @@ func (o octopi) height() (h int) {
 }
 
 func (o octopi) width() (w int) {
-	for pos, _ := range o {
+	for pos := range o {
 		if pos.c > w {
 			w = pos.c
 		}
@@ -63,7 +63,7 @@ func (o octopi) width() (w int) {
 }
 
 func (o octopi) grow() {
-	for p, _ := range o {
+	for p := range o {
 		o[p]++
 	}
 }
