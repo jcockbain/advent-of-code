@@ -112,8 +112,8 @@ func part1(steps int) int {
 	}
 	totalFlashes := 0
 	for s := 0; s < steps; s++ {
-		fmt.Printf("\n<--Step %s -->\n\n", fmt.Sprint(s))
-		o.drawMap()
+		// fmt.Printf("\n<--Step %s -->\n\n", fmt.Sprint(s))
+		// o.drawMap()
 		o.grow()
 		for {
 			newFlashes := o.flash()
@@ -136,8 +136,8 @@ func part2() int {
 	}
 	totalFlashes := 0
 	for s := 0; s < 1000; s++ {
-		fmt.Printf("\n<--Step %s -->\n\n", fmt.Sprint(s))
-		o.drawMap()
+		// fmt.Printf("\n<--Step %s -->\n\n", fmt.Sprint(s))
+		// o.drawMap()
 		o.grow()
 		for {
 			newFlashes := o.flash()
