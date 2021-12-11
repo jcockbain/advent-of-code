@@ -38,6 +38,15 @@ func ReadNumbers(filename string) []int {
 	return numbers
 }
 
+// GetInts takes a string, and converts each line to an int
+func GetInts(str string) []int{
+	var numbers []int
+	for _, line := range strings.Split(str, "\n"){
+		numbers = append(numbers, toInt(line))
+	}
+	return numbers
+}
+
 // ReadRaw returns the content of a text file as a string
 func ReadRaw(filename string) string {
 	content, err := ioutil.ReadFile(filename)

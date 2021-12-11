@@ -1,29 +1,31 @@
 package main
 
 import (
-	"time"
-
-	input "github.com/jcockbain/advent-of-code-2021/inpututils"
-
+	_ "embed"
 	"fmt"
+
+	inputUtils "github.com/jcockbain/advent-of-code-2021/inpututils"
 )
 
+var (
+	benchmark = false
+)
+
+//go:embed input.txt
+var input string
+
 func main() {
-	start := time.Now()
-	input := input.GetInputPath()
+	p1 := part1()
+	p2 := part2()
 
-	fmt.Println("--- Part One ---")
-	fmt.Println(part1(input))
-	elapsed := time.Since(start)
-	fmt.Printf("%s took %s seconds \n", "Part 1", elapsed)
-
-	fmt.Println("--- Part Two ---")
-	fmt.Println(part2(input))
-	fmt.Printf("%s took %s seconds \n", "Part 2", time.Since(start)-elapsed)
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
 
-func part1(filename string) (increased int) {
-	nums := input.ReadNumbers(filename)
+func part1() (increased int) {
+	nums := inputUtils.GetInts(input)
 	last := nums[0]
 	for _, i := range nums[1:] {
 		if i > last {
@@ -34,8 +36,8 @@ func part1(filename string) (increased int) {
 	return
 }
 
-func part2(filename string) (increased int) {
-	nums := input.ReadNumbers(filename)
+func part2() (increased int) {
+	nums := inputUtils.GetInts(input)
 	last, numsLength := sum(nums[0:3]), len(nums)
 	for i := 3; i < numsLength-2; i++ {
 		next := sum(nums[i : i+3])
