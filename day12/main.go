@@ -40,9 +40,8 @@ type node struct {
 }
 
 func part1() int {
-	lines := utils.GetLines(input)
 	g := graph{}
-	for _, line := range lines {
+	for _, line := range utils.GetLines(input) {
 		parts := re.FindStringSubmatch(line)
 		start, end := parts[1], parts[2]
 
@@ -96,9 +95,8 @@ func isUpperCase(s string) bool {
 }
 
 func part2() int {
-	lines := utils.GetLines(input)
 	g := graph{}
-	for _, line := range lines {
+	for _, line := range utils.GetLines(input) {
 		parts := re.FindStringSubmatch(line)
 		start, end := parts[1], parts[2]
 

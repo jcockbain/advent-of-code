@@ -6,10 +6,10 @@ import (
 	"strings"
 
 	"fmt"
+	"math"
 )
 
-const MaxUint = ^uint(0)
-const maxInt = int(MaxUint >> 1)
+const maxInt = math.MaxInt32
 
 var (
 	benchmark = false
@@ -31,10 +31,15 @@ func main() {
 func part1() int {
 	nums := mapToInts(strings.Split(input, ","))
 	ans := maxInt
+	occupied := make(map[int]int, len(nums))
+	for _, n := range nums {
+		occupied[n]++
+	}
+
 	for pos := minSlice(nums); pos <= maxSlice(nums); pos++ {
 		total := 0
-		for _, start := range nums {
-			total += abs(pos - start)
+		for start, count := range occupied {
+			total += (abs(pos-start) * count)
 		}
 		ans = min(ans, total)
 	}
@@ -44,10 +49,14 @@ func part1() int {
 func part2() int {
 	nums := mapToInts(strings.Split(input, ","))
 	ans := maxInt
+	occupied := make(map[int]int, len(nums))
+	for _, n := range nums {
+		occupied[n]++
+	}
 	for pos := minSlice(nums); pos <= maxSlice(nums); pos++ {
 		total := 0
-		for _, start := range nums {
-			total += getP2Distance(start, pos)
+		for start, count := range occupied {
+			total += getP2Distance(start, pos) * count
 		}
 		ans = min(ans, total)
 	}
@@ -56,12 +65,7 @@ func part2() int {
 
 func getP2Distance(start, end int) int {
 	diff := abs(start - end)
-	ans, step := 0, 0
-	for i := 0; i <= diff; i++ {
-		ans += step
-		step++
-	}
-	return ans
+	return diff * (diff + 1) / 2
 }
 
 func min(a, b int) int {
