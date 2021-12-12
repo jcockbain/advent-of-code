@@ -23,10 +23,8 @@ To then run the solutions:
 // using day1 as an example
 cd day01 
 
-// defaults to using input.txt in the current dir
 go run main.go
 
-// run with custom input (I normally use the test input given with the problem)
 go run main.go test1.txt
 
 ```
