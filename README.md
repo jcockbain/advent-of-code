@@ -37,14 +37,15 @@ The results are found using a `BenchmarkMain` benchmark in each solution. This t
 
 | DAY | RUNTIME |
 |-----|---------|
-|   1 | 102µs   |
-|   2 | 714µs   |
-|   3 | 537µs   |
-|   4 | 19.4ms  |
-|   5 | 38ms    |
-|   6 | 69.9µs  |
-|   7 | 339ms   |
-|   8 | 2.93ms  |
-|   9 | 8.93ms  |
-|  10 | 1.53ms  |
-|  11 | 6.5ms   |
+|   1 | 122µs   |
+|   2 | 739µs   |
+|   3 | 529µs   |
+|   4 | 16.8ms  |
+|   5 | 42.4ms  |
+|   6 | 70.8µs  |
+|   7 | 324ms   |
+|   8 | 2.94ms  |
+|   9 | 8.86ms  |
+|  10 | 1.49ms  |
+|  11 | 6.8ms   |
+|  12 | 2.32s   |
