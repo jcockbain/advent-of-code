@@ -24,6 +24,7 @@ func main() {
 		panic(err)
 	}
 	table := getTable(benchmarks)
+	fmt.Print(table)
 	ioutil.WriteFile("README.md", []byte(table), 0644)
 }
 

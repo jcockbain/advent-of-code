@@ -19,8 +19,6 @@ else
     bench $1
 fi
 
-
-
 cd benchmarks || exit
 go run benchmarks.go
 cd ..

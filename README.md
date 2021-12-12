@@ -21,11 +21,16 @@ To then run the solutions:
 
 ```go
 // using day1 as an example
-cd day01 
+cd day01
 
+// run the binary
 go run main.go
 
-go run main.go test1.txt
+// run tests
+go test
+
+//benchmark solution
+go test --bench=BenchmarkMain
 
 ```
 
@@ -44,7 +49,7 @@ The results are found using a `BenchmarkMain` benchmark in each solution. This t
 |     7 | 34.3ms  |
 |     8 | 3.04ms  |
 |     9 | 8.05ms  |
-|    10 | 1.57ms  |
+|    10 | 1.45ms  |
 |    11 | 6.57ms  |
 |    12 | 365ms   |
 | Total | 480ms   |
