@@ -125,6 +125,7 @@ func part2() int {
 	dfs = func(s string, currentPath []string) {
 		if s == "end" {
 			allPaths = append(allPaths, currentPath)
+			return
 		}
 
 		for _, n := range g.getNeighbours(s) {
