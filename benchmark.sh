@@ -13,3 +13,6 @@ done
 cd benchmarks || exit
 go run benchmarks.go
 cd ..
+
+sed -i '/|/d' README.md
+cat benchmarks/README.md >> README.md
