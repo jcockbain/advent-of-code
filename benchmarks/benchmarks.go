@@ -30,13 +30,16 @@ func main() {
 func getTable(benchmarks benchmarkData) string {
 	data := [][]string{}
 
+	totalRuntime := time.Duration(0)
 	for day, runtime := range benchmarks {
 		data = append(data, []string{fmt.Sprint(day), formatDuration(runtime)})
+		totalRuntime += runtime
 	}
 
 	sort.SliceStable(data, func(i, j int) bool {
 		return toInt(data[i][0]) < toInt(data[j][0])
 	})
+	data = append(data, []string{"Total", formatDuration(totalRuntime)})
 
 	tableString := &strings.Builder{}
 	table := tablewriter.NewWriter(tableString)
