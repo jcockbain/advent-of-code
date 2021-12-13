@@ -32,9 +32,33 @@ func main() {
 	}
 }
 
+func part1() int {
+	lines := utils.GetLines(input)
+	p, folds := loadData(lines)
+	f := folds[0]
+	if f.axes == "x" {
+		p = p.foldAlongX(f.line)
+	} else {
+		p = p.foldAlongY(f.line)
+	}
+	return p.countDots()
+}
+
+func part2() string {
+	lines := utils.GetLines(input)
+	p, folds := loadData(lines)
+	for _, f := range folds {
+		if f.axes == "x" {
+			p = p.foldAlongX(f.line)
+		} else {
+			p = p.foldAlongY(f.line)
+		}
+	}
+	return p.string()
+}
+
 func loadData(s []string) (paper, []fold) {
-	p := paper{}
-	folds := []fold{}
+	p, folds := paper{}, []fold{}
 	for _, l := range s {
 		if re1.MatchString(l) {
 			parts := re1.FindStringSubmatch(l)
@@ -68,11 +92,6 @@ func (p paper) getWidth() (w int) {
 	return w + 1
 }
 
-type fold struct {
-	line int
-	axes string
-}
-
 func (p paper) foldAlongX(line int) paper {
 	r := paper{}
 	for d := range p {
@@ -89,57 +108,6 @@ func (p paper) foldAlongY(line int) paper {
 	return r
 }
 
-func (p paper) string() string {
-	var b strings.Builder
-	for y := 0; y < p.getHeight(); y++ {
-		line := []string{}
-		for x := 0; x < p.getWidth(); x++ {
-			var char string
-			if p[pos{x, y}] {
-				char = "#"
-			} else {
-				char = "."
-			}
-			line = append(line, char)
-		}
-		b.WriteString(strings.Join(line, ""))
-		b.WriteString("\n")
-	}
-	return b.String()
-}
-
-func part1() int {
-	lines := utils.GetLines(input)
-	p, folds := loadData(lines)
-	f := folds[0]
-	if f.axes == "x" {
-		p = p.foldAlongX(f.line)
-	} else {
-		p = p.foldAlongY(f.line)
-	}
-	return p.countDots()
-}
-
-func part2() string {
-	lines := utils.GetLines(input)
-	p, folds := loadData(lines)
-	for _, f := range folds {
-		if f.axes == "x" {
-			p = p.foldAlongX(f.line)
-		} else {
-			p = p.foldAlongY(f.line)
-		}
-	}
-	return p.string()
-}
-
-func abs(x int) int {
-	if x < 0 {
-		return -x
-	}
-	return x
-}
-
 func (p paper) countDots() (r int) {
 	for _, dot := range p {
 		if dot {
@@ -147,6 +115,34 @@ func (p paper) countDots() (r int) {
 		}
 	}
 	return
+}
+
+func (p paper) string() string {
+	var b strings.Builder
+	for y := 0; y < p.getHeight(); y++ {
+		line := []string{}
+		for x := 0; x < p.getWidth(); x++ {
+			char := "."
+			if p[pos{x, y}] {
+				char = "#"
+			}
+			line = append(line, char)
+		}
+		b.WriteString(fmt.Sprintf("%s\n", strings.Join(line, "")))
+	}
+	return b.String()
+}
+
+type fold struct {
+	line int
+	axes string
+}
+
+func abs(x int) int {
+	if x < 0 {
+		return -x
+	}
+	return x
 }
 
 func toInt(x string) int {
