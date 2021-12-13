@@ -29,7 +29,7 @@ go run main.go
 // run tests
 go test
 
-//benchmark solution
+// benchmark solution
 go test --bench=BenchmarkMain
 
 ```
