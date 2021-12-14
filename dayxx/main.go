@@ -1,29 +1,32 @@
 package main
 
 import (
-	"time"
-
-	input "github.com/jcockbain/advent-of-code-2021/inpututils"
+	_ "embed"
 
 	"fmt"
+
+	"github.com/jcockbain/advent-of-code-2021/utils"
 )
 
+var (
+	benchmark = false
+)
+
+//go:embed input.txt
+var input string
+
 func main() {
-	start := time.Now()
-	input := input.GetInputPath()
+	p1 := part1()
+	p2 := part2()
 
-	fmt.Println("--- Part One ---")
-	fmt.Println(part1(input))
-	elapsed := time.Since(start)
-	fmt.Printf("%s took %s seconds \n", "Part 1", elapsed)
-
-	fmt.Println("--- Part Two ---")
-	fmt.Println(part2(input))
-	fmt.Printf("%s took %s seconds \n", "Part 2", time.Since(start)-elapsed)
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
 
-func part1(filename string) int {
-	nums := input.ReadNumbers(filename)
+func part1() int {
+	nums := utils.GetInts(input)
 	sum := 0
 	for _, i := range nums {
 		sum += i
@@ -31,6 +34,6 @@ func part1(filename string) int {
 	return sum
 }
 
-func part2(filename string) int {
+func part2() int {
 	return 12
 }

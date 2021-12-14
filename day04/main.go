@@ -1,31 +1,34 @@
 package main
 
 import (
+	_ "embed"
 	"strconv"
-	"time"
 
-	input "github.com/jcockbain/advent-of-code-2021/inpututils"
+	"github.com/jcockbain/advent-of-code-2021/utils"
 
 	"fmt"
 	"strings"
 )
 
+var (
+	benchmark = false
+)
+
+//go:embed input.txt
+var input string
+
 func main() {
-	start := time.Now()
-	input := input.GetInputPath()
+	p1 := part1()
+	p2 := part2()
 
-	fmt.Println("--- Part One ---")
-	fmt.Println(part1(input))
-	elapsed := time.Since(start)
-	fmt.Printf("%s took %s seconds \n", "Part 1", elapsed)
-
-	fmt.Println("--- Part Two ---")
-	fmt.Println(part2(input))
-	fmt.Printf("%s took %s seconds \n", "Part 2", time.Since(start)-elapsed)
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
 
-func part1(filename string) int {
-	inp := input.ReadLines(filename)
+func part1() int {
+	inp := utils.GetLines(input)
 	numbersCalled, boards := processInput(inp)
 
 	for _, n := range numbersCalled {
@@ -39,8 +42,8 @@ func part1(filename string) int {
 	panic("no answer!")
 }
 
-func part2(filename string) int {
-	inp := input.ReadLines(filename)
+func part2() int {
+	inp := utils.GetLines(input)
 	numbersCalled, boards := processInput(inp)
 
 	for _, n := range numbersCalled {

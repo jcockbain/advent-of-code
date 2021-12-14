@@ -1,51 +1,62 @@
 package main
 
 import (
+	_ "embed"
 	"strconv"
-	"time"
-
-	input "github.com/jcockbain/advent-of-code-2021/inpututils"
+	"strings"
 
 	"fmt"
+	"math"
 )
 
-const MaxUint = ^uint(0)
-const maxInt = int(MaxUint >> 1)
+const maxInt = math.MaxInt32
+
+var (
+	benchmark = false
+)
+
+//go:embed input.txt
+var input string
 
 func main() {
-	start := time.Now()
-	input := input.GetInputPath()
+	p1 := part1()
+	p2 := part2()
 
-	fmt.Println("--- Part One ---")
-	fmt.Println(part1(input))
-	elapsed := time.Since(start)
-	fmt.Printf("%s took %s seconds \n", "Part 1", elapsed)
-
-	fmt.Println("--- Part Two ---")
-	fmt.Println(part2(input))
-	fmt.Printf("%s took %s seconds \n", "Part 2", time.Since(start)-elapsed)
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
 
-func part1(filename string) int {
-	nums := mapToInts(input.ReadSlice(filename))
+func part1() int {
+	nums := mapToInts(strings.Split(input, ","))
 	ans := maxInt
+	occupied := make(map[int]int, len(nums))
+	for _, n := range nums {
+		occupied[n]++
+	}
+
 	for pos := minSlice(nums); pos <= maxSlice(nums); pos++ {
 		total := 0
-		for _, start := range nums {
-			total += abs(pos - start)
+		for start, count := range occupied {
+			total += (abs(pos-start) * count)
 		}
 		ans = min(ans, total)
 	}
 	return ans
 }
 
-func part2(filename string) int {
-	nums := mapToInts(input.ReadSlice(filename))
+func part2() int {
+	nums := mapToInts(strings.Split(input, ","))
 	ans := maxInt
+	occupied := make(map[int]int, len(nums))
+	for _, n := range nums {
+		occupied[n]++
+	}
 	for pos := minSlice(nums); pos <= maxSlice(nums); pos++ {
 		total := 0
-		for _, start := range nums {
-			total += getP2Distance(start, pos)
+		for start, count := range occupied {
+			total += getP2Distance(start, pos) * count
 		}
 		ans = min(ans, total)
 	}
@@ -54,12 +65,7 @@ func part2(filename string) int {
 
 func getP2Distance(start, end int) int {
 	diff := abs(start - end)
-	ans, step := 0, 0
-	for i := 0; i <= diff; i++ {
-		ans += step
-		step++
-	}
-	return ans
+	return diff * (diff + 1) / 2
 }
 
 func min(a, b int) int {

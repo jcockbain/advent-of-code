@@ -1,12 +1,31 @@
 package main
 
 import (
-	"time"
+	_ "embed"
 
-	input "github.com/jcockbain/advent-of-code-2021/inpututils"
+	"sort"
 
 	"fmt"
+
+	"github.com/jcockbain/advent-of-code-2021/utils"
 )
+
+var (
+	benchmark = false
+)
+
+//go:embed input.txt
+var input string
+
+func main() {
+	p1 := part1()
+	p2 := part2()
+
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+		fmt.Printf("Part 2: %d\n", p2)
+	}
+}
 
 type Stack []string
 
@@ -36,20 +55,6 @@ func (s *Stack) Pop() (string, bool) {
 	}
 }
 
-func main() {
-	start := time.Now()
-	input := input.GetInputPath()
-
-	fmt.Println("--- Part One ---")
-	fmt.Println(part1(input))
-	elapsed := time.Since(start)
-	fmt.Printf("%s took %s seconds \n", "Part 1", elapsed)
-
-	fmt.Println("--- Part Two ---")
-	fmt.Println(part2(input))
-	fmt.Printf("%s took %s seconds \n", "Part 2", time.Since(start)-elapsed)
-}
-
 type bracketsMap map[string]string
 
 func (b bracketsMap) isOpeningBracket(s string) bool {
@@ -59,24 +64,6 @@ func (b bracketsMap) isOpeningBracket(s string) bool {
 		}
 	}
 	return false
-}
-
-func (b bracketsMap) isClosingBracket(s string) bool {
-	for close, _ := range b {
-		if close == s {
-			return true
-		}
-	}
-	return false
-}
-
-func (b bracketsMap) getClosingBracket(s string) string {
-	for close, open := range b {
-		if open == s {
-			return close
-		}
-	}
-	return ""
 }
 
 var brackets = bracketsMap{
@@ -93,19 +80,25 @@ var value = map[string]int{
 	">": 25137,
 }
 
-func part1(filename string) int {
-	lines := input.ReadLines(filename)
+var value2 = map[string]int{
+	"(": 1,
+	"[": 2,
+	"{": 3,
+	"<": 4,
+}
+
+func part1() int {
+	lines := utils.GetLines(input)
 	total := 0
 	for _, l := range lines {
 		s := Stack{}
-
 		for _, i := range l {
 			c := string(i)
-			fmt.Println(s)
 			if brackets.isOpeningBracket(c) {
 				s.Push(c)
 			} else if s.Peek() != brackets[c] {
 				total += value[c]
+				break
 			} else {
 				s.Pop()
 			}
@@ -114,6 +107,39 @@ func part1(filename string) int {
 	return total
 }
 
-func part2(filename string) int {
-	return 12
+func part2() int {
+	lines := utils.GetLines(input)
+	scores := []int{}
+	for _, l := range lines {
+		s := Stack{}
+		score := 0
+		incomplete := true
+		for _, i := range l {
+			c := string(i)
+			if brackets.isOpeningBracket(c) {
+				s.Push(c)
+			} else if s.Peek() != brackets[c] {
+				incomplete = false
+				break
+			} else {
+				s.Pop()
+			}
+		}
+		if incomplete {
+			for _, c := range reverse(s) {
+				score *= 5
+				score += value2[c]
+			}
+			scores = append(scores, score)
+		}
+	}
+	sort.Ints(scores)
+	return scores[(len(scores)-1)/2]
+}
+
+func reverse(s []string) []string {
+	for i, j := 0, len(s)-1; i < j; i, j = i+1, j-1 {
+		s[i], s[j] = s[j], s[i]
+	}
+	return s
 }
