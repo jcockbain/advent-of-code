@@ -4,6 +4,7 @@ import (
 	_ "embed"
 	"math"
 	"strconv"
+	"strings"
 
 	"fmt"
 
@@ -83,8 +84,9 @@ func getNeighbours(p pos, h int, w int) []pos {
 	return n
 }
 
-func (b board) getMinPathDijkstra(start pos, target pos) int {
+func (b board) getMinPathDijkstra(start pos, target pos) (int, map[pos]pos) {
 	dist := map[pos]int{}
+	prev := map[pos]pos{}
 	q := &PriorityQueue{
 		items: make([]pos, 0, len(b)),
 		m:     make(map[pos]int, len(b)),
@@ -102,11 +104,12 @@ func (b board) getMinPathDijkstra(start pos, target pos) int {
 			alt := dist[u] + b[v]
 			if alt < dist[v] {
 				dist[v] = alt
+				prev[v] = u
 				q.update(v, alt)
 			}
 		}
 	}
-	return dist[target]
+	return dist[target], prev
 }
 
 func part1() int {
@@ -119,7 +122,9 @@ func part1() int {
 			b[pos{x, y}] = toInt(string(c))
 		}
 	}
-	return b.getMinPathDijkstra(pos{0, 0}, pos{width - 1, height - 1})
+	dist, _ := b.getMinPathDijkstra(pos{0, 0}, pos{width - 1, height - 1})
+	// printPath(pos{0, 0}, pos{width - 1, height - 1}, path)
+	return dist
 }
 
 func part2() int {
@@ -138,7 +143,32 @@ func part2() int {
 			}
 		}
 	}
-	return b.getMinPathDijkstra(pos{0, 0}, pos{width - 1, height - 1})
+	dist, _ := b.getMinPathDijkstra(pos{0, 0}, pos{width - 1, height - 1})
+	// printPath(pos{0, 0}, pos{width - 1, height - 1}, path)
+	return dist
+}
+
+func printPath(start pos, end pos, prev map[pos]pos) {
+	path := []pos{}
+	pathsVisited := map[pos]bool{}
+	for end != start {
+		path = append(path, end)
+		end = prev[end]
+	}
+	for _, p := range path {
+		pathsVisited[p] = true
+	}
+	for y := 0; y < path[0].y+1; y++ {
+		line := []string{}
+		for x := 0; x < path[0].x+1; x++ {
+			if _, in := pathsVisited[pos{x, y}]; in {
+				line = append(line, "#")
+			} else {
+				line = append(line, ".")
+			}
+		}
+		fmt.Println(strings.Join(line, ""))
+	}
 }
 
 func getWrapped(c int) int {
