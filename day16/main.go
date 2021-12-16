@@ -2,6 +2,7 @@ package main
 
 import (
 	_ "embed"
+	"math"
 	"strconv"
 	"strings"
 
@@ -16,10 +17,11 @@ var (
 var input string
 
 func main() {
-	p1, _ := part1()
+	p1, p2 := part1()
 
 	if !benchmark {
 		fmt.Printf("Part 1: %d\n", p1)
+		fmt.Printf("Part 2: %d\n", p2)
 	}
 }
 
@@ -72,17 +74,18 @@ func parseLiteralValue(b string) (int, int, int) {
 func parseOperatorValue(b string) (int, int, int) {
 	pVersion := binaryToInt(b[:3])
 	lengthID := string(b[6])
+	typeID := binaryToInt(b[3:6])
 	if lengthID == "0" {
 		length := binaryToInt(b[7:22])
 		current := 22
-		total := 0
+		packets := []int{}
 		for current < 22+length {
 			count, version, finalIdx := parsePacket(b[current:])
-			total += count
+			packets = append(packets, count)
 			pVersion += version
 			current += finalIdx
 		}
-		return total, pVersion, current
+		return doOperator(packets, typeID), pVersion, current
 	}
 	numberOfPackets := binaryToInt(b[7:18])
 	packets := [][]int{}
@@ -92,7 +95,97 @@ func parseOperatorValue(b string) (int, int, int) {
 		current += finalIdx
 		packets = append(packets, []int{total, version})
 	}
-	return sumByIdx(packets, 0), pVersion + sumByIdx(packets, 1), current
+	packetValues := getVals(packets)
+	return doOperator(packetValues, typeID), pVersion + sumByIdx(packets, 1), current
+}
+
+func sum(p []int) (i int) {
+	for _, x := range p {
+		i += x
+	}
+	return
+}
+
+func product(p []int) int {
+	i := 1
+	for _, x := range p {
+		i *= x
+	}
+	return i
+}
+
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
+}
+
+func minSlice(s []int) int {
+	m := math.MaxInt
+	for _, x := range s {
+		m = min(m, x)
+	}
+	return m
+}
+
+func maxSlice(s []int) int {
+	m := 0
+	for _, x := range s {
+		if x > m {
+			m = x
+		}
+	}
+	return m
+}
+
+func equal(p []int) int {
+	if p[0] == p[1] {
+		return 1
+	}
+	return 0
+}
+
+func less(p []int) int {
+	if p[0] < p[1] {
+		return 1
+	}
+	return 0
+}
+
+func great(p []int) int {
+	if p[0] > p[1] {
+		return 1
+	}
+	return 0
+}
+
+func doOperator(packets []int, code int) int {
+	switch code {
+	case 0:
+		return sum(packets)
+	case 1:
+		return product(packets)
+	case 2:
+		return minSlice(packets)
+	case 3:
+		return maxSlice(packets)
+	case 5:
+		return great(packets)
+	case 6:
+		return less(packets)
+	case 7:
+		return equal(packets)
+	}
+	panic("no!")
+}
+
+func getVals(x [][]int) []int {
+	vals := []int{}
+	for _, p := range x {
+		vals = append(vals, p[0])
+	}
+	return vals
 }
 
 func sumByIdx(x [][]int, i int) int {

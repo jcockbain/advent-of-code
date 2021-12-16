@@ -35,9 +35,9 @@ func TestHexToBin(t *testing.T) {
 
 func TestParsePacket(t *testing.T) {
 	total, _, _ := parsePacket("00111000000000000110111101000101001010010001001000000000")
-	assert.Equal(t, 30, total)
+	assert.Equal(t, 1, total)
 	total, _, _ = parsePacket("11101110000000001101010000001100100000100011000001100000")
-	assert.Equal(t, 6, total)
+	assert.Equal(t, 3, total)
 }
 
 func TestParseLiteralValue(t *testing.T) {
@@ -53,5 +53,5 @@ func TestParseLiteralValue(t *testing.T) {
 
 func TestParseOperatorValue(t *testing.T) {
 	total, _, _ := parseOperatorValue("00111000000000000110111101000101001010010001001000000000")
-	assert.Equal(t, 30, total)
+	assert.Equal(t, 1, total)
 }
