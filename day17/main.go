@@ -44,11 +44,11 @@ func fireGun(v vel, target area) (bool, int) {
 		p.x += v.x
 		p.y += v.y
 		if v.x > 0 {
-			v.x -= 1
+			v.x--
 		} else if v.x < 0 {
-			v.x += 1
+			v.x++
 		}
-		v.y -= 1
+		v.y--
 		if p.y > highestY {
 			highestY = p.y
 		}
