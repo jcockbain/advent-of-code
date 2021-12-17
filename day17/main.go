@@ -91,8 +91,8 @@ func part2() int {
 	}
 	numberOfEntries := 0
 	// trial and error for these TODO: investigate way to automate this
-	for vx := 0; vx < 500; vx++ {
-		for vy := -1000; vy < 1000; vy++ {
+	for vx := 0; vx <= maxX; vx++ {
+		for vy := -200; vy < 200; vy++ {
 			v := vel{vx, vy}
 			entersT, _ := fireGun(v, target)
 			if entersT {
