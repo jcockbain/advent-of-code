@@ -38,8 +38,7 @@ type area struct{ min, max pos }
 
 func fireGun(v vel, target area) (bool, int) {
 	p := pos{0, 0}
-	highestY := 0
-	enteredT := false
+	highestY, enteredT := 0, false
 	for p.x <= target.max.x && p.y >= target.min.y {
 		p.x += v.x
 		p.y += v.y
@@ -57,7 +56,6 @@ func fireGun(v vel, target area) (bool, int) {
 		}
 	}
 	return enteredT, highestY
-
 }
 
 func part1() int {
@@ -68,10 +66,9 @@ func part1() int {
 		pos{maxX, maxY},
 	}
 	maxH := 0
-	for vx := 0; vx < 500; vx++ {
-		for vy := -50; vy < 500; vy++ {
-			v := vel{vx, vy}
-			entersT, h := fireGun(v, target)
+	for vx := 0; vx < maxX; vx++ {
+		for vy := -50; vy < 200; vy++ {
+			entersT, h := fireGun(vel{vx, vy}, target)
 			if entersT {
 				if h > maxH {
 					maxH = h
@@ -90,11 +87,9 @@ func part2() int {
 		pos{maxX, maxY},
 	}
 	numberOfEntries := 0
-	// trial and error for these TODO: investigate way to automate this
 	for vx := 0; vx <= maxX; vx++ {
 		for vy := -200; vy < 200; vy++ {
-			v := vel{vx, vy}
-			entersT, _ := fireGun(v, target)
+			entersT, _ := fireGun(vel{vx, vy}, target)
 			if entersT {
 				numberOfEntries++
 			}
