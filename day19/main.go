@@ -44,7 +44,7 @@ func abs(x int) int {
 
 type scanner struct {
 	number          int
-	relativeBeacons []pos
+	absoluteBeacons []pos
 	absolutePos     pos
 }
 
@@ -60,7 +60,7 @@ func part1() (int, int) {
 		} else if line != "" {
 			p := lineRe.FindStringSubmatch(line)
 			x, y, z := toInt(p[1]), toInt(p[2]), toInt(p[3])
-			currentScanner.relativeBeacons = append(currentScanner.relativeBeacons, pos{x, y, z})
+			currentScanner.absoluteBeacons = append(currentScanner.absoluteBeacons, pos{x, y, z})
 		}
 	}
 	scs = append(scs, currentScanner)
@@ -84,7 +84,7 @@ func part1() (int, int) {
 	}
 	positions := map[pos]bool{}
 	for _, u := range fixedScanners {
-		for _, p := range u.relativeBeacons {
+		for _, p := range u.absoluteBeacons {
 			positions[p] = true
 		}
 	}
@@ -100,25 +100,25 @@ func part1() (int, int) {
 	return len(positions), maxDist
 }
 
-func locateScanner(refScanner, newScanner scanner) (scanner, bool) {
-	for _, refBeacon := range refScanner.relativeBeacons {
-		for _, newBeacon := range newScanner.relativeBeacons {
+func locateScanner(fixed, unfixed scanner) (scanner, bool) {
+	for _, fixedBcn := range fixed.absoluteBeacons {
+		for _, unfixedBeacon := range unfixed.absoluteBeacons {
 			for or := range orMap {
-				newScannerPos := refBeacon.subtract(orMap[or](newBeacon))
-				positionsFromRef := getBcPositionsFromScanner(newScanner.relativeBeacons, newScannerPos, or)
-				commonBeacons := getCommonBeacons(positionsFromRef, refScanner.relativeBeacons)
+				unfixedPos := fixedBcn.subtract(orMap[or](unfixedBeacon))
+				positionsFromFixed := getBcnPositionsFromScanner(unfixed.absoluteBeacons, unfixedPos, or)
+				commonBeacons := getCommonBcnPositions(positionsFromFixed, fixed.absoluteBeacons)
 				if len(commonBeacons) >= 12 {
-					newScanner.relativeBeacons = positionsFromRef
-					newScanner.absolutePos = newScannerPos
-					return newScanner, true
+					unfixed.absoluteBeacons = positionsFromFixed
+					unfixed.absolutePos = unfixedPos
+					return unfixed, true
 				}
 			}
 		}
 	}
-	return newScanner, false
+	return unfixed, false
 }
 
-func getBcPositionsFromScanner(bcs []pos, rp pos, or orientation) []pos {
+func getBcnPositionsFromScanner(bcs []pos, rp pos, or orientation) []pos {
 	res := make([]pos, len(bcs))
 	for i, b := range bcs {
 		new := orMap[or](b)
@@ -127,7 +127,7 @@ func getBcPositionsFromScanner(bcs []pos, rp pos, or orientation) []pos {
 	return res
 }
 
-func getCommonBeacons(bc1 []pos, bc2 []pos) []pos {
+func getCommonBcnPositions(bc1 []pos, bc2 []pos) []pos {
 	res := []pos{}
 	for _, b1 := range bc1 {
 		for _, b2 := range bc2 {
@@ -141,6 +141,7 @@ func getCommonBeacons(bc1 []pos, bc2 []pos) []pos {
 
 type posMap func(pos) pos
 
+// horrible way to gen rotations
 func getOrMap() map[orientation]posMap {
 	return map[orientation]posMap{
 		{1, 2, 3}:    func(p pos) pos { return pos{p.x, p.y, p.z} },
