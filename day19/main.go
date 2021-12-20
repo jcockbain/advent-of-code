@@ -55,9 +55,8 @@ func part1() (int, int) {
 	for _, line := range lines[1:] {
 		if re.MatchString(line) {
 			parts := re.FindStringSubmatch(line)
-			number := toInt(parts[1])
 			scs = append(scs, currentScanner)
-			currentScanner = scanner{number: number}
+			currentScanner = scanner{number: toInt(parts[1])}
 		} else if line != "" {
 			p := lineRe.FindStringSubmatch(line)
 			x, y, z := toInt(p[1]), toInt(p[2]), toInt(p[3])
@@ -101,45 +100,22 @@ func part1() (int, int) {
 	return len(positions), maxDist
 }
 
-type setKey struct {
-	p  pos
-	or orientation
-}
-
-type set map[setKey]bool
-
-func (s set) hasKey(k setKey) bool {
-	if _, in := s[k]; in {
-		return true
-	}
-	return false
-}
-
 func locateScanner(refScanner, newScanner scanner) (scanner, bool) {
-	positionsTried := set{}
 	for _, refBeacon := range refScanner.relativeBeacons {
 		for _, newBeacon := range newScanner.relativeBeacons {
 			for or := range orMap {
-				newScannerPos := getScannerPosFromRef(refBeacon, newBeacon, or)
-				if !positionsTried.hasKey(setKey{newScannerPos, or}) {
-					positionsFromRef := getBcPositionsFromScanner(newScanner.relativeBeacons, newScannerPos, or)
-					commonBeacons := getCommonBeacons(positionsFromRef, refScanner.relativeBeacons)
-					if len(commonBeacons) >= 12 {
-						newScanner.relativeBeacons = positionsFromRef
-						newScanner.absolutePos = newScannerPos
-						return newScanner, true
-					}
-					positionsTried[setKey{newScannerPos, or}] = true
+				newScannerPos := refBeacon.subtract(orMap[or](newBeacon))
+				positionsFromRef := getBcPositionsFromScanner(newScanner.relativeBeacons, newScannerPos, or)
+				commonBeacons := getCommonBeacons(positionsFromRef, refScanner.relativeBeacons)
+				if len(commonBeacons) >= 12 {
+					newScanner.relativeBeacons = positionsFromRef
+					newScanner.absolutePos = newScannerPos
+					return newScanner, true
 				}
 			}
 		}
 	}
 	return newScanner, false
-}
-
-func getScannerPosFromRef(posFromRef pos, posFromNew pos, or orientation) pos {
-	new := orMap[or](posFromNew)
-	return posFromRef.subtract(new)
 }
 
 func getBcPositionsFromScanner(bcs []pos, rp pos, or orientation) []pos {
