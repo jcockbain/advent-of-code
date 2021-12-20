@@ -10,7 +10,3 @@ func BenchmarkMain(b *testing.B) {
 		main()
 	}
 }
-
-func TestOrientationMap(t *testing.T){
-
-}

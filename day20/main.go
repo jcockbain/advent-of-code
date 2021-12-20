@@ -133,7 +133,6 @@ func part1() int {
 		if toggle {
 			border = !border
 		}
-		fmt.Println(border)
 		// img.drawImg()
 	}
 
