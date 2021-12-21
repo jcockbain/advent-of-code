@@ -72,7 +72,7 @@ type player struct {
 	pos   int
 }
 
-func newPlayer(score int, pos int) *player { return &player{score, pos} }
+func newPlayer(score int, pos int) player { return player{score, pos} }
 
 func (p *player) nextState(roll int) {
 	p.pos = getWrappedPos(p.pos + roll)
@@ -95,10 +95,10 @@ func newGameState(p1Start int, p2Start int) game {
 	}
 }
 
-func (g *game) nextState(d int) *game {
+func (g *game) nextState(d int) game {
 	newGs := game{
-		player1:     *newPlayer(g.player1.score, g.player1.pos),
-		player2:     *newPlayer(g.player2.score, g.player2.pos),
+		player1:     newPlayer(g.player1.score, g.player1.pos),
+		player2:     newPlayer(g.player2.score, g.player2.pos),
 		player1Turn: g.player1Turn,
 		universes:   g.universes,
 	}
@@ -109,7 +109,7 @@ func (g *game) nextState(d int) *game {
 	}
 	newGs.player1Turn = !newGs.player1Turn
 	newGs.universes *= combos[d]
-	return &newGs
+	return newGs
 }
 
 type gameStack []game
@@ -133,7 +133,7 @@ func part2() int {
 	for len(stack) > 0 {
 		game := stack.pop()
 		for d := 3; d <= 9; d++ {
-			newState := *game.nextState(d)
+			newState := game.nextState(d)
 			if (newState.player1.score >= TARGET) || (newState.player2.score >= TARGET) {
 				if newState.player1.score >= newState.player2.score {
 					player1Wins += newState.universes
