@@ -55,6 +55,8 @@ func part1() int {
 	return p1Score * rolls
 }
 
+const TARGET = 21
+
 var combos = map[int]int{
 	3: 1,
 	4: 3,
@@ -64,8 +66,6 @@ var combos = map[int]int{
 	8: 3,
 	9: 1,
 }
-
-const TARGET = 21
 
 type player struct {
 	score int
@@ -80,16 +80,16 @@ func (p *player) nextState(roll int) {
 }
 
 type game struct {
-	player1     *player
-	player2     *player
+	player1     player
+	player2     player
 	player1Turn bool
 	universes   int
 }
 
 func newGameState(p1Start int, p2Start int) game {
 	return game{
-		&player{0, p1Start},
-		&player{0, p2Start},
+		player{0, p1Start},
+		player{0, p2Start},
 		true,
 		1,
 	}
@@ -97,8 +97,8 @@ func newGameState(p1Start int, p2Start int) game {
 
 func (g *game) nextState(d int) *game {
 	newGs := game{
-		player1:     newPlayer(g.player1.score, g.player1.pos),
-		player2:     newPlayer(g.player2.score, g.player2.pos),
+		player1:     *newPlayer(g.player1.score, g.player1.pos),
+		player2:     *newPlayer(g.player2.score, g.player2.pos),
 		player1Turn: g.player1Turn,
 		universes:   g.universes,
 	}
