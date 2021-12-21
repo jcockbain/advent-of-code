@@ -57,7 +57,7 @@ func part1() int {
 
 const TARGET = 21
 
-var combos = map[int]int{
+var rollsToUniverses = map[int]int{
 	3: 1,
 	4: 3,
 	5: 6,
@@ -86,7 +86,7 @@ type game struct {
 	universes   int
 }
 
-func newGameState(p1Start int, p2Start int) game {
+func newGame(p1Start int, p2Start int) game {
 	return game{
 		player{0, p1Start},
 		player{0, p2Start},
@@ -108,7 +108,7 @@ func (g *game) nextState(d int) game {
 		newGs.player2.nextState(d)
 	}
 	newGs.player1Turn = !newGs.player1Turn
-	newGs.universes *= combos[d]
+	newGs.universes *= rollsToUniverses[d]
 	return newGs
 }
 
@@ -129,7 +129,7 @@ func part2() int {
 	p1Pos := toInt(re.FindStringSubmatch(lines[0])[2])
 	p2Pos := toInt(re.FindStringSubmatch(lines[1])[2])
 	player1Wins, player2Wins := 0, 0
-	stack := gameStack{newGameState(p1Pos, p2Pos)}
+	stack := gameStack{newGame(p1Pos, p2Pos)}
 	for len(stack) > 0 {
 		game := stack.pop()
 		for d := 3; d <= 9; d++ {
