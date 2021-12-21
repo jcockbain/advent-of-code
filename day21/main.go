@@ -32,39 +32,20 @@ func part1() int {
 	lines := utils.GetLines(input)
 	p1Pos := toInt(re.FindStringSubmatch(lines[0])[2])
 	p2Pos := toInt(re.FindStringSubmatch(lines[1])[2])
-	dice := 1
-	rolls := 0
-	p1Score := 0
-	p2Score := 0
-
+	dice, rolls, p1Score, p2Score := 1, 0, 0, 0
 	for (p1Score < 1000) && (p2Score < 1000) {
-		var totalP1Roll int
-		for i := 0; i < 3; i++ {
-			rolls++
-			totalP1Roll += dice
-			dice++
-			if dice == 1000 {
-				dice = 1
-			}
-		}
-		p1Pos = getWrappedPos(p1Pos + totalP1Roll)
+		p1Pos = getWrappedPos(p1Pos + (dice * 3) + 3)
+		dice = getWrappedDice(dice + 3)
 		p1Score += p1Pos
+		rolls += 3
 		if p1Score >= 1000 {
 			break
 		}
-		var totalP2Roll int
-		for i := 0; i < 3; i++ {
-			rolls++
-			totalP2Roll += dice
-			dice++
-			if dice == 1000 {
-				dice = 1
-			}
-		}
-		p2Pos = getWrappedPos(p2Pos + totalP2Roll)
+		p2Pos = getWrappedPos(p2Pos + (dice * 3) + 3)
+		dice = getWrappedDice(dice + 3)
 		p2Score += p2Pos
+		rolls += 3
 	}
-
 	if p1Score >= 1000 {
 		return p2Score * rolls
 	}
@@ -73,6 +54,10 @@ func part1() int {
 
 func getWrappedPos(p int) int {
 	return ((p - 1) % 10) + 1
+}
+
+func getWrappedDice(x int) int {
+	return ((x - 1) % 1000) + 1
 }
 
 var combos = map[int]int{
