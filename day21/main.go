@@ -28,6 +28,9 @@ func main() {
 	}
 }
 
+func getWrappedPos(p int) int  { return ((p - 1) % 10) + 1 }
+func getWrappedDice(x int) int { return ((x - 1) % 1000) + 1 }
+
 func part1() int {
 	lines := utils.GetLines(input)
 	p1Pos := toInt(re.FindStringSubmatch(lines[0])[2])
@@ -50,14 +53,6 @@ func part1() int {
 		return p2Score * rolls
 	}
 	return p1Score * rolls
-}
-
-func getWrappedPos(p int) int {
-	return ((p - 1) % 10) + 1
-}
-
-func getWrappedDice(x int) int {
-	return ((x - 1) % 1000) + 1
 }
 
 var combos = map[int]int{
