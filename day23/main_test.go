@@ -14,7 +14,7 @@ func BenchmarkMain(b *testing.B) {
 }
 
 func TestGetRoute(t *testing.T) {
-	b := parseBurrow()
+	b := parseBurrow(true)
 	type test struct {
 		start    pos
 		dest     pos

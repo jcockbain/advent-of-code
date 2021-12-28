@@ -13,16 +13,13 @@ var (
 	benchmark = false
 )
 
-//go:embed test1.txt
+//go:embed input.txt
 var input string
 
 type pos struct{ r, c int }
 
-func (p pos) add(p2 pos) pos { return pos{p.r + p2.r, p.c + p2.c} }
-
-func (p pos) inHallway() bool {
-	return p.r == hallway
-}
+func (p pos) add(p2 pos) pos  { return pos{p.r + p2.r, p.c + p2.c} }
+func (p pos) inHallway() bool { return p.r == hallway }
 
 func (p pos) inCorridor() bool {
 	for _, cp := range corridors {
@@ -65,15 +62,10 @@ func (b burrow) lineComplete(a byte) bool {
 			return false
 		}
 	}
-	// fmt.Println("line complete", a)
-	// b.drawMap()
 	return true
 }
 
-func (b burrow) inOwnCorridor(p pos) bool {
-	a := b[p]
-	return p.c == corridors[a]
-}
+func (b burrow) inOwnCorridor(p pos) bool { return p.c == corridors[b[p]] }
 
 func (b burrow) isSolution() bool {
 	for a := range corridors {
@@ -81,7 +73,6 @@ func (b burrow) isSolution() bool {
 			return false
 		}
 	}
-	// fmt.Println("solution!"
 	return true
 }
 
@@ -93,7 +84,7 @@ func (b burrow) isBlockingCorridor(p pos) bool {
 			return true
 		}
 	}
-	return true
+	return false
 }
 
 func (b burrow) spaceBelow(p pos) bool {
@@ -132,11 +123,9 @@ func (b burrow) canEnterCorridor(p1 pos, p2 pos) bool {
 	return true
 }
 
-func (b burrow) getPossibleMoves(lastMoved pos) []move {
+func (b burrow) getPossibleMoves() []move {
 	moves := []move{}
-
 	for p1, a := range b {
-		// fmt.Println(string(a))
 		if isAmp(a) {
 			for p2, a2 := range b {
 				if (p1 != p2) && (a2 == space) {
@@ -152,9 +141,6 @@ func (b burrow) getPossibleMoves(lastMoved pos) []move {
 					if p1.inHallway() && p2.inHallway() {
 						continue
 					}
-					// if (p2.c == 3 || p2.c == 5 || p2.c == 7 || p2.c == 9) && p2.c != corridors[a] {
-					// 	continue
-					// }
 					// no reason to move upwards within a corridor
 					if p1.c == p2.c && p2.r-p1.r < 0 {
 						continue
@@ -267,18 +253,9 @@ type move struct {
 	energy int
 }
 
-func (mv move) reverse() (r move) {
-	// fmt.Println("reverse")
-	r.start = mv.dest
-	r.dest = mv.start
-	r.energy = mv.energy
-	r.amp = mv.amp
-	return
-}
-
 var hallway = 1
 var corridorTop = 2
-var corridorBottom = 5
+var corridorBottom = 3
 var amber = byte('A')
 var bronze = byte('B')
 var copper = byte('C')
@@ -300,9 +277,11 @@ var energies = map[byte]int{
 }
 
 func main() {
-	p2 := part1()
+	p1 := getMinEnergy(false)
+	p2 := getMinEnergy(true)
 
 	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
 		fmt.Printf("Part 2: %d\n", p2)
 	}
 }
@@ -316,67 +295,53 @@ func (c cache) in(k string) bool {
 	return false
 }
 
-func part1() int {
-	b := parseBurrow()
+func getMinEnergy(p2 bool) int {
+	b := parseBurrow(p2)
 	parseRoutes(b)
 	c := cache{}
-	var findMinEnergyFromConfig func(burrow, int, pos)
-	minEnergy := 100000
-	findMinEnergyFromConfig = func(b burrow, energy int, lastMoved pos) {
-		// // fmt.Println(lastMoved)
-		// b.drawMap()
-		cacheKey := b.toCacheKey()
-		// dots := strings.Count(cacheKey[:11], ".")
-		// if cacheKey[:19] == "..........DAAAABBBB" {
-		// 	fmt.Println(energy)
-		// 	b.drawMap()
-		// }
-		if energy > minEnergy {
-			return
-		}
+	var findMinEnergyFromConfig func(burrow, int) int
+	findMinEnergyFromConfig = func(b burrow, energy int) int {
 		if b.isSolution() {
-			if energy < minEnergy {
-				fmt.Println(energy)
-				minEnergy = energy
-				return
-			}
+			return 0
 		}
-		if c.in(cacheKey) {
-			if energy < c[cacheKey] {
-				c[cacheKey] = energy
+		cacheKey := b.toCacheKey()
+		if !c.in(cacheKey) {
+			energies := []int{}
+			for _, mv := range b.getPossibleMoves() {
+				energies = append(energies, mv.energy+findMinEnergyFromConfig(b.move(mv), energy+mv.energy))
+			}
+			if len(energies) == 0 {
+				// set as a large number to mark as impossible configuration
+				c[cacheKey] = 100000
 			} else {
-				// fmt.Println("seen, exiting!")
-				return
+				c[cacheKey] = minSlice(energies)
 			}
-		} else {
-			c[cacheKey] = energy
 		}
-		possibleMoves := b.getPossibleMoves(lastMoved)
-		// fmt.Print(possibleMoves)
-		for _, mv := range possibleMoves {
-			b = b.move(mv)
-			findMinEnergyFromConfig(b, energy+mv.energy, mv.dest)
-			b = b.move(mv.reverse())
-		}
+		return c[cacheKey]
 	}
-
-	findMinEnergyFromConfig(b, 0, pos{100, 100})
-	return minEnergy
+	return findMinEnergyFromConfig(b, 0)
 }
 
 func minSlice(s []int) int {
-	min := 10000
-	for _, x := range s {
-		if x > min {
+	min := s[0]
+	for _, x := range s[1:] {
+		if x < min {
 			min = x
 		}
 	}
 	return min
 }
 
-func parseBurrow() burrow {
+func parseBurrow(p2 bool) burrow {
 	b := burrow{}
 	lines := utils.GetLines(input)
+	if p2 {
+		newLines := []string{}
+		newLines = append(newLines, lines[:3]...)
+		newLines = append(newLines, p2Lines...)
+		lines = append(newLines, lines[3:]...)
+		corridorBottom = 5
+	}
 	for c := 1; c <= 11; c++ {
 		p := pos{1, c}
 		b[p] = '.'
@@ -399,3 +364,5 @@ func parseRoutes(b burrow) {
 		}
 	}
 }
+
+var p2Lines = []string{"  #D#C#B#A#", "  #D#B#A#C#"}
