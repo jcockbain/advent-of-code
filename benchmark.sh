@@ -2,7 +2,7 @@
 
 function bench {
     echo "benchmarking day $1"
-    cd "day$1" && go test --bench=BenchmarkMain | grep "BenchmarkMain-" | awk '{print $3}' > ../benchmarks/results/$1.txt
+    cd "day$1" && go1.18beta1 test --bench=BenchmarkMain | grep "BenchmarkMain-" | awk '{print $3}' > ../benchmarks/results/$1.txt
     cd ..
 }
 

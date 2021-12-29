@@ -2,6 +2,8 @@ package main
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func BenchmarkMain(b *testing.B) {
@@ -9,4 +11,8 @@ func BenchmarkMain(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		main()
 	}
+}
+
+func TestMain(t *testing.T) {
+	assert.Equal(t, 549, part1())
 }
