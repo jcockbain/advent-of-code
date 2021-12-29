@@ -36,17 +36,16 @@ func (b board) drawMap() {
 	}
 }
 
-func (b board) moveEast() (board, bool) {
+func (b *board) moveEast() bool {
 	moved := false
-	newBoard := board{}
 	toEmpty := map[pos]bool{}
 	toFilled := map[pos]bool{}
 	for r := 0; r < height; r++ {
 		for c := 0; c < width; c++ {
-			if b[pos{r, c}] == '>' {
+			if (*b)[pos{r, c}] == '>' {
 				p := pos{r, c}
 				nextPos := pos{r, (c + 1) % width}
-				if b[nextPos] == '.' {
+				if (*b)[nextPos] == '.' {
 					moved = true
 					toEmpty[p] = true
 					toFilled[nextPos] = true
@@ -58,28 +57,25 @@ func (b board) moveEast() (board, bool) {
 		for c := 0; c < width; c++ {
 			p := pos{r, c}
 			if toFilled[p] {
-				newBoard[p] = '>'
+				(*b)[p] = '>'
 			} else if toEmpty[p] {
-				newBoard[p] = '.'
-			} else {
-				newBoard[p] = b[p]
+				(*b)[p] = '.'
 			}
 		}
 	}
-	return newBoard, moved
+	return moved
 }
 
-func (b board) moveSouth() (board, bool) {
+func (b *board) moveSouth() bool {
 	moved := false
-	newBoard := board{}
 	toEmpty := map[pos]bool{}
 	toFilled := map[pos]bool{}
 	for r := 0; r < height; r++ {
 		for c := 0; c < width; c++ {
-			if b[pos{r, c}] == 'v' {
+			if (*b)[pos{r, c}] == 'v' {
 				p := pos{r, c}
 				nextPos := pos{(r + 1) % height, c}
-				if b[nextPos] == '.' {
+				if (*b)[nextPos] == '.' {
 					moved = true
 					toEmpty[p] = true
 					toFilled[nextPos] = true
@@ -91,15 +87,13 @@ func (b board) moveSouth() (board, bool) {
 		for c := 0; c < width; c++ {
 			p := pos{r, c}
 			if toFilled[p] {
-				newBoard[p] = 'v'
+				(*b)[p] = 'v'
 			} else if toEmpty[p] {
-				newBoard[p] = '.'
-			} else {
-				newBoard[p] = b[p]
+				(*b)[p] = '.'
 			}
 		}
 	}
-	return newBoard, moved
+	return moved
 }
 
 func parse() board {
@@ -127,16 +121,14 @@ func main() {
 }
 
 func part1() int {
-	b := parse()
+	w := parse()
 	moves := 0
 	for moves < 1000 {
-		w := b
-		w, movedEast := w.moveEast()
-		w, movedSouth := w.moveSouth()
+		movedEast := w.moveEast()
+		movedSouth := w.moveSouth()
 		if !(movedSouth || movedEast) {
 			break
 		}
-		b = w
 		moves++
 	}
 	return moves + 1
