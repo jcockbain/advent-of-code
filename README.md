@@ -61,6 +61,7 @@ The results are found using a `BenchmarkMain` benchmark in each solution. This t
 |    19 | 18.7s   |
 |    20 | 574ms   |
 |    21 | 742ms   |
+|    22 | 5.07ms  |
 |    23 | 38.1s   |
 |    24 | 17.1µs  |
 |    25 | 4.36s   |
