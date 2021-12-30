@@ -9,12 +9,38 @@ import (
 	"github.com/jcockbain/advent-of-code-2021/utils"
 )
 
+//go:embed test1.txt
+var input string
+
 var (
-	benchmark = false
+	benchmark      = false
+	hallway        = 1
+	corridorTop    = 2
+	corridorBottom = 3
+	space          = byte('.')
+	allRoutes      = map[[2]pos][]pos{}
+	p2Lines        = []string{"  #D#C#B#A#", "  #D#B#A#C#"}
 )
 
-//go:embed input.txt
-var input string
+const (
+	amber  = byte('A')
+	bronze = byte('B')
+	copper = byte('C')
+	desert = byte('D')
+)
+
+var corridors = map[byte]int{
+	amber:  3,
+	bronze: 5,
+	copper: 7,
+	desert: 9,
+}
+var energies = map[byte]int{
+	amber:  1,
+	bronze: 10,
+	copper: 100,
+	desert: 1000,
+}
 
 type pos struct{ r, c int }
 
@@ -253,29 +279,6 @@ type move struct {
 	energy int
 }
 
-var hallway = 1
-var corridorTop = 2
-var corridorBottom = 3
-var amber = byte('A')
-var bronze = byte('B')
-var copper = byte('C')
-var desert = byte('D')
-var space = byte('.')
-var allRoutes = map[[2]pos][]pos{}
-
-var corridors = map[byte]int{
-	amber:  3,
-	bronze: 5,
-	copper: 7,
-	desert: 9,
-}
-var energies = map[byte]int{
-	amber:  1,
-	bronze: 10,
-	copper: 100,
-	desert: 1000,
-}
-
 func main() {
 	p1 := getMinEnergy(false)
 	p2 := getMinEnergy(true)
@@ -299,8 +302,8 @@ func getMinEnergy(p2 bool) int {
 	b := parseBurrow(p2)
 	parseRoutes(b)
 	c := cache{}
-	var findMinEnergyFromConfig func(burrow, int) int
-	findMinEnergyFromConfig = func(b burrow, energy int) int {
+	var findMinEnergyFromConfig func(burrow) int
+	findMinEnergyFromConfig = func(b burrow) int {
 		if b.isSolution() {
 			return 0
 		}
@@ -308,18 +311,18 @@ func getMinEnergy(p2 bool) int {
 		if !c.in(cacheKey) {
 			energies := []int{}
 			for _, mv := range b.getPossibleMoves() {
-				energies = append(energies, mv.energy+findMinEnergyFromConfig(b.move(mv), energy+mv.energy))
+				energies = append(energies, mv.energy+findMinEnergyFromConfig(b.move(mv)))
 			}
 			if len(energies) == 0 {
 				// set as a large number to mark as impossible configuration
-				c[cacheKey] = 100000
+				c[cacheKey] = 1000000
 			} else {
 				c[cacheKey] = minSlice(energies)
 			}
 		}
 		return c[cacheKey]
 	}
-	return findMinEnergyFromConfig(b, 0)
+	return findMinEnergyFromConfig(b)
 }
 
 func minSlice(s []int) int {
@@ -364,5 +367,3 @@ func parseRoutes(b burrow) {
 		}
 	}
 }
-
-var p2Lines = []string{"  #D#C#B#A#", "  #D#B#A#C#"}

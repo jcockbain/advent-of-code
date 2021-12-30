@@ -42,8 +42,8 @@ func part2(steps int) int {
 	for s := 0; s < steps; s++ {
 		newC := counter{}
 		for k, v := range c {
-			newC[string(k[0]) + rules[k]] += v
-			newC[rules[k] + string(k[1])] += v
+			newC[string(k[0])+rules[k]] += v
+			newC[rules[k]+string(k[1])] += v
 		}
 		c = newC
 	}

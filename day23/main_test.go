@@ -13,6 +13,11 @@ func BenchmarkMain(b *testing.B) {
 	}
 }
 
+func TestMain(t *testing.T) {
+	assert.Equal(t, 12521, getMinEnergy(false))
+	assert.Equal(t, 44169, getMinEnergy(true))
+}
+
 func TestGetRoute(t *testing.T) {
 	b := parseBurrow(true)
 	type test struct {
