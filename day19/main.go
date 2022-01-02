@@ -107,7 +107,7 @@ func locateScanner(fixed, unfixed scanner) (scanner, bool) {
 				unfixedPos := fixedBcn.subtract(orMap[or](unfixedBeacon))
 				positionsFromFixed := getBcnPositionsFromScanner(unfixed.absoluteBeacons, unfixedPos, or)
 				commonBeacons := getCommonBcnPositions(positionsFromFixed, fixed.absoluteBeacons)
-				if len(commonBeacons) >= 12 {
+				if commonBeacons >= 12 {
 					unfixed.absoluteBeacons = positionsFromFixed
 					unfixed.absolutePos = unfixedPos
 					return unfixed, true
@@ -127,12 +127,12 @@ func getBcnPositionsFromScanner(bcs []pos, rp pos, or orientation) []pos {
 	return res
 }
 
-func getCommonBcnPositions(bc1 []pos, bc2 []pos) []pos {
-	res := []pos{}
+func getCommonBcnPositions(bc1 []pos, bc2 []pos) int {
+	var res int
 	for _, b1 := range bc1 {
 		for _, b2 := range bc2 {
 			if b1 == b2 {
-				res = append(res, b1)
+				res++
 			}
 		}
 	}
