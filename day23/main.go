@@ -41,20 +41,12 @@ var energies = map[byte]int{
 	desert: 1000,
 }
 
-var validHallwayPos = []pos{}
+// check order from middle first, as more likely to move amps there
+var validHallwayPos = []pos{{1, 6}, {1, 4}, {1, 8}, {1, 2}, {1, 1}, {1, 10}, {1, 11}}
 
 type pos struct{ r, c int }
 
 func (p pos) add(p2 pos) pos { return pos{p.r + p2.r, p.c + p2.c} }
-
-func (p pos) inCorridor() bool {
-	for _, cp := range corridors {
-		if p.c == cp {
-			return true
-		}
-	}
-	return false
-}
 
 type burrow map[pos]byte
 
@@ -83,8 +75,7 @@ func (b burrow) in(p pos) bool {
 func (b burrow) lineComplete(a byte) bool {
 	c := corridors[a]
 	for r := corridorTop; r <= corridorBottom; r++ {
-		p := pos{r, c}
-		if b[p] != a {
+		if b[pos{r, c}] != a {
 			return false
 		}
 	}
@@ -126,22 +117,19 @@ func (b burrow) canEnterCorridor(a byte) (bool, pos) {
 	if b[pos{corridorTop, c}] != space {
 		return false, pos{0, 0}
 	}
+	var topSpace pos
 	for r := corridorTop; r <= corridorBottom; r++ {
 		amp := b[pos{r, c}]
-		if (amp != space) && (amp != a) {
+		if amp == space {
+			topSpace = pos{r, c}
+		} else if amp != a {
 			return false, pos{0, 0}
 		}
 	}
-	for r := corridorTop; r <= corridorBottom; r++ {
-		amp := b[pos{r, c}]
-		if amp == a {
-			return true, pos{r - 1, c}
-		}
-	}
-
-	return true, pos{corridorBottom, c}
+	return true, topSpace
 }
 
+// return first amp from top of corridor (and bool for whether one is found)
 func (b burrow) getFirstCorridorAmp(c int) (pos, bool) {
 	for r := corridorTop; r <= corridorBottom; r++ {
 		a := b[pos{r, c}]
@@ -173,6 +161,7 @@ func (b burrow) getPossibleMoves() []move {
 		}
 	}
 
+	// move into hallway
 	for a, c := range corridors {
 		p, hasAmp := b.getFirstCorridorAmp(c)
 		if hasAmp {
@@ -217,7 +206,7 @@ func (ps posSet) in(p pos) bool {
 	return false
 }
 
-// bfs to find route
+// bfs to find routes between positions in map
 func (b burrow) getRoute(p1 pos, p2 pos) []pos {
 	q := queue{[]pos{p1}}
 	visited := posSet{}
@@ -241,6 +230,7 @@ func (b burrow) getRoute(p1 pos, p2 pos) []pos {
 	panic("no route!")
 }
 
+// todo? test using this as only data structure format and whether that has efficiency gains
 func (b burrow) toCacheKey() string {
 	s := strings.Builder{}
 	for c := 1; c <= 11; c++ {
@@ -264,13 +254,9 @@ func isAmp(b byte) bool {
 }
 
 func (b burrow) move(m move) burrow {
-	newB := burrow{}
-	for pos, a := range b {
-		newB[pos] = a
-	}
-	newB[m.dest] = m.amp
-	newB[m.start] = space
-	return newB
+	b[m.dest] = m.amp
+	b[m.start] = space
+	return b
 }
 
 type move struct {
@@ -278,6 +264,13 @@ type move struct {
 	start  pos
 	dest   pos
 	energy int
+}
+
+func (m move) reverse() move {
+	startCp := m.start
+	m.start = m.dest
+	m.dest = startCp
+	return m
 }
 
 func main() {
@@ -313,6 +306,8 @@ func getMinEnergy(p2 bool) int {
 			energies := []int{}
 			for _, mv := range b.getPossibleMoves() {
 				energies = append(energies, mv.energy+findMinEnergyFromConfig(b.move(mv)))
+				mv = mv.reverse()
+				b.move(mv)
 			}
 			if len(energies) == 0 {
 				// set as a large number to mark as impossible configuration
@@ -346,16 +341,13 @@ func parseBurrow(p2 bool) burrow {
 		lines = append(newLines, lines[3:]...)
 		corridorBottom = 5
 	} else {
-		corridorBottom = 2
+		corridorBottom = 3
 	}
 	for _, p := range getHallwayPos() {
 		b[p] = '.'
-		if !p.inCorridor() {
-			validHallwayPos = append(validHallwayPos, p)
-		}
 	}
 	for _, c := range corridors {
-		for r := 2; r <= corridorBottom; r++ {
+		for r := corridorTop; r <= corridorBottom; r++ {
 			p := pos{r, c}
 			b[p] = lines[r][c]
 		}
