@@ -9,20 +9,19 @@ import (
 	"github.com/jcockbain/advent-of-code-2021/utils"
 )
 
-//go:embed test1.txt
+//go:embed input.txt
 var input string
 
 var (
 	benchmark      = false
-	hallway        = 1
 	corridorTop    = 2
 	corridorBottom = 3
-	space          = byte('.')
 	allRoutes      = map[[2]pos][]pos{}
 	p2Lines        = []string{"  #D#C#B#A#", "  #D#B#A#C#"}
 )
 
 const (
+	space  = byte('.')
 	amber  = byte('A')
 	bronze = byte('B')
 	copper = byte('C')
@@ -42,10 +41,11 @@ var energies = map[byte]int{
 	desert: 1000,
 }
 
+var validHallwayPos = []pos{}
+
 type pos struct{ r, c int }
 
-func (p pos) add(p2 pos) pos  { return pos{p.r + p2.r, p.c + p2.c} }
-func (p pos) inHallway() bool { return p.r == hallway }
+func (p pos) add(p2 pos) pos { return pos{p.r + p2.r, p.c + p2.c} }
 
 func (p pos) inCorridor() bool {
 	for _, cp := range corridors {
@@ -91,8 +91,6 @@ func (b burrow) lineComplete(a byte) bool {
 	return true
 }
 
-func (b burrow) inOwnCorridor(p pos) bool { return p.c == corridors[b[p]] }
-
 func (b burrow) isSolution() bool {
 	for a := range corridors {
 		if !b.lineComplete(a) {
@@ -113,19 +111,6 @@ func (b burrow) isBlockingCorridor(p pos) bool {
 	return false
 }
 
-func (b burrow) spaceBelow(p pos) bool {
-	if p.r == corridorBottom {
-		return false
-	}
-	for r := p.r + 1; r <= corridorBottom; r++ {
-		amp := b[pos{r, p.c}]
-		if amp == space {
-			return true
-		}
-	}
-	return false
-}
-
 func (b burrow) routeIsClear(p []pos) bool {
 	for _, p := range p[1:] {
 		if b[p] != space {
@@ -135,57 +120,73 @@ func (b burrow) routeIsClear(p []pos) bool {
 	return true
 }
 
-func (b burrow) canEnterCorridor(p1 pos, p2 pos) bool {
-	a := b[p1]
-	if corridors[a] != p2.c {
-		return false
+// return if can enter corridor, and highest available pos
+func (b burrow) canEnterCorridor(a byte) (bool, pos) {
+	c := corridors[a]
+	if b[pos{corridorTop, c}] != space {
+		return false, pos{0, 0}
 	}
 	for r := corridorTop; r <= corridorBottom; r++ {
-		amp := b[pos{r, p2.c}]
+		amp := b[pos{r, c}]
 		if (amp != space) && (amp != a) {
-			return false
+			return false, pos{0, 0}
 		}
 	}
-	return true
+	for r := corridorTop; r <= corridorBottom; r++ {
+		amp := b[pos{r, c}]
+		if amp == a {
+			return true, pos{r - 1, c}
+		}
+	}
+
+	return true, pos{corridorBottom, c}
+}
+
+func (b burrow) getFirstCorridorAmp(c int) (pos, bool) {
+	for r := corridorTop; r <= corridorBottom; r++ {
+		a := b[pos{r, c}]
+		if isAmp(a) {
+			return pos{r, c}, true
+		}
+	}
+	return pos{0, 0}, false
 }
 
 func (b burrow) getPossibleMoves() []move {
 	moves := []move{}
-	for p1, a := range b {
+	// move from hallway
+	for _, p := range validHallwayPos {
+		a := b[p]
 		if isAmp(a) {
-			for p2, a2 := range b {
-				if (p1 != p2) && (a2 == space) {
-					// rule 1: no stopping above a corridor
-					if p2.inCorridor() && p2.inHallway() {
-						continue
-					}
-					// rule 2: must only enter own corridor, with own amps
-					if p2.inCorridor() && !b.canEnterCorridor(p1, p2) {
-						continue
-					}
-					// rule 3: no moving within hallways
-					if p1.inHallway() && p2.inHallway() {
-						continue
-					}
-					// no reason to move upwards within a corridor
-					if p1.c == p2.c && p2.r-p1.r < 0 {
-						continue
-					}
-					// only move out of own corridor if blocking other amp
-					if p1.inCorridor() && p1.c == corridors[a] && p2.inHallway() && !b.isBlockingCorridor(p1) {
-						continue
-					}
-					// don't leave space below when entering coridor
-					if p2.inCorridor() && p1.inHallway() && p2.r-p1.r > 0 && b.spaceBelow(p2) {
-						continue
-					}
-					// stay at the bottom of own corrdor
-					if b.inOwnCorridor(p1) && p1.r == corridorBottom {
-						continue
-					}
-					r := allRoutes[[2]pos{p1, p2}]
+			canMove, dest := b.canEnterCorridor(a)
+			if canMove {
+				r := allRoutes[[2]pos{p, dest}]
+				if b.routeIsClear(r) {
+					moves = append(moves, move{
+						a,
+						p,
+						dest,
+						(len(r) - 1) * energies[a],
+					})
+				}
+			}
+		}
+	}
+
+	for a, c := range corridors {
+		p, hasAmp := b.getFirstCorridorAmp(c)
+		if hasAmp {
+			amp := b[p]
+			if !(amp == a && !b.isBlockingCorridor(p)) {
+				for _, dest := range validHallwayPos {
+					r := allRoutes[[2]pos{p, dest}]
 					if b.routeIsClear(r) {
-						moves = append(moves, move{a, p1, p2, (len(r) - 1) * energies[a]})
+						moves = append(moves, move{
+							amp,
+							p,
+							dest,
+							(len(r) - 1) * energies[amp],
+						})
 					}
 				}
 			}
@@ -344,10 +345,14 @@ func parseBurrow(p2 bool) burrow {
 		newLines = append(newLines, p2Lines...)
 		lines = append(newLines, lines[3:]...)
 		corridorBottom = 5
+	} else {
+		corridorBottom = 2
 	}
-	for c := 1; c <= 11; c++ {
-		p := pos{1, c}
+	for _, p := range getHallwayPos() {
 		b[p] = '.'
+		if !p.inCorridor() {
+			validHallwayPos = append(validHallwayPos, p)
+		}
 	}
 	for _, c := range corridors {
 		for r := 2; r <= corridorBottom; r++ {
@@ -356,6 +361,14 @@ func parseBurrow(p2 bool) burrow {
 		}
 	}
 	return b
+}
+
+func getHallwayPos() (res []pos) {
+	for c := 1; c <= 11; c++ {
+		p := pos{1, c}
+		res = append(res, p)
+	}
+	return res
 }
 
 func parseRoutes(b burrow) {
