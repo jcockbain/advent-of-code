@@ -306,12 +306,11 @@ func getMinEnergy(p2 bool) int {
 			energies := []int{}
 			for _, mv := range b.getPossibleMoves() {
 				energies = append(energies, mv.energy+findMinEnergyFromConfig(b.move(mv)))
-				mv = mv.reverse()
-				b.move(mv)
+				b.move(mv.reverse())
 			}
 			if len(energies) == 0 {
 				// set as a large number to mark as impossible configuration
-				c[cacheKey] = 1000000
+				c[cacheKey] = 100000
 			} else {
 				c[cacheKey] = minSlice(energies)
 			}
