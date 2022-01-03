@@ -67,17 +67,22 @@ func part1() (int, int) {
 	fixedScanners := []scanner{scs[0]}
 	unfixedScanners := scs[1:]
 
+	// keep a set of fixed -> unfixed to avoid dupicating work
+	tried := map[[2]int]struct{}{}
 	for updated := true; updated && len(unfixedScanners) > 0; {
 		updated = false
 		for _, scA := range fixedScanners {
 			for i := 0; i < len(unfixedScanners); i++ {
 				unfixed := unfixedScanners[i]
-				updatedSc, isUpdated := locateScanner(scA, unfixed)
-				if isUpdated {
-					updated = true
-					fixedScanners = append(fixedScanners, updatedSc)
-					unfixedScanners = append(unfixedScanners[:i], unfixedScanners[i+1:]...)
-					i--
+				if _, in := tried[[2]int{scA.number, unfixed.number}]; !in {
+					updatedSc, isUpdated := locateScanner(scA, unfixed)
+					if isUpdated {
+						updated = true
+						fixedScanners = append(fixedScanners, updatedSc)
+						unfixedScanners = append(unfixedScanners[:i], unfixedScanners[i+1:]...)
+						i--
+					}
+					tried[[2]int{scA.number, unfixed.number}] = struct{}{}
 				}
 			}
 		}
