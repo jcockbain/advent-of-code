@@ -4,7 +4,6 @@ import (
 	_ "embed"
 	"math"
 	"strconv"
-	"strings"
 
 	"fmt"
 
@@ -30,9 +29,10 @@ func main() {
 
 func part1() int {
 	lines := utils.GetLines(input)
-	s := lines[0]
+	s := stringToStack(lines[0])
 	for _, newS := range lines[1:] {
-		s = transformPair(s, newS)
+		stack := stringToStack(newS)
+		s = transformPair(s, stack)
 	}
 	return calcMag(s)
 }
@@ -43,7 +43,7 @@ func part2() int {
 	for i := 0; i < len(lines); i++ {
 		for j := 0; j < len(lines); j++ {
 			if i != j {
-				addVal := calcMag(transformPair(lines[i], lines[j]))
+				addVal := calcMag(transformPair(stringToStack(lines[i]), stringToStack(lines[j])))
 				if addVal > max {
 					max = addVal
 				}
@@ -53,29 +53,38 @@ func part2() int {
 	return max
 }
 
-func transformPair(s1, s2 string) string {
-	return transform(fmt.Sprintf("[%s,%s]", s1, s2))
+func transformPair(s1, s2 []string) []string {
+	stack := make([]string, len(s1)+len(s2)+3)
+	stack[0] = "["
+	stack[len(s1)+1] = ","
+	stack[len(s1)+len(s2)+2] = "]"
+	for i := 0; i < len(s1); i++ {
+		stack[i+1] = s1[i]
+	}
+	for i := 0; i < len(s2); i++ {
+		stack[i+2+len(s1)] = s2[i]
+	}
+	return transform(stack)
 }
 
-func transform(s string) string {
+func transform(stack []string) []string {
 	for {
-		trans := explode(s)
-		if trans != s {
-			s = trans
+		trans, changed := explode(stack)
+		if changed {
+			stack = trans
 			continue
 		}
-		spt := split(s)
-		if spt == s {
-			return s
+		spt, changed := split(stack)
+		if !changed {
+			return spt
 		}
-		s = spt
+		stack = spt
 	}
 }
 
-func calcMag(s string) int {
-	stack := stringToStack(s)
+func calcMag(stack []string) int {
 	for len(stack) > 1 {
-		for i, _ := range stack {
+		for i, _ := range stack[:len(stack)-3] {
 			if isPairStack(stack[i : i+3]) {
 				newVal := (3 * toInt(stack[i])) + (2 * toInt(stack[i+2]))
 				stack = append(append(stack[:i-1], fmt.Sprint(newVal)), stack[i+4:]...)
@@ -85,9 +94,9 @@ func calcMag(s string) int {
 	return toInt(stack[0])
 }
 
-func explode(s string) string {
-	stack := stringToStack(s)
+func explode(stack []string) ([]string, bool) {
 	originalStack := make([]string, len(stack))
+	changed := false
 	nesting := 0
 	copy(originalStack, stack)
 	for i, c := range stack {
@@ -115,19 +124,15 @@ func explode(s string) string {
 				}
 			}
 			stack = append(append(stack[:i-1], "0"), stack[i+4:]...)
+			changed = true
 			break
 		}
 	}
-
-	res := strings.Builder{}
-	for _, f := range stack {
-		res.WriteString(f)
-	}
-	return res.String()
+	return stack, changed
 }
 
-func split(s string) string {
-	stack := stringToStack(s)
+func split(stack []string) ([]string, bool) {
+	changed := false
 	originalStack := make([]string, len(stack))
 	copy(originalStack, stack)
 	for i, c := range stack {
@@ -135,14 +140,11 @@ func split(s string) string {
 			lhs, rhs := createSplitPair(toInt(c))
 			pair := []string{"[", fmt.Sprint(lhs), ",", fmt.Sprint(rhs), "]"}
 			stack = append(append(stack[:i], pair...), originalStack[i+1:]...)
+			changed = true
 			break
 		}
 	}
-	res := strings.Builder{}
-	for _, f := range stack {
-		res.WriteString(f)
-	}
-	return res.String()
+	return stack, changed
 }
 
 func stringToStack(s string) []string {
