@@ -1,4 +1,4 @@
-# 🎄 advent-of-code-2021 🎄
+# 🎄 advent-of-code 🎄
 
 ![Go](https://github.com/jcockbain/advent-of-code-2021/workflows/Go/badge.svg)
 ![Go Report Card](https://goreportcard.com/badge/github.com/jcockbain/advent-of-code-2021)
