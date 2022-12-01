@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"math"
-	"sort"
+	"path"
 	"strconv"
 	"strings"
 	"time"
@@ -13,68 +13,88 @@ import (
 	"github.com/olekukonko/tablewriter"
 )
 
-//go:embed results
+var years = []int{2021, 2022}
+
+//go:embed results/*
 var resultsFS embed.FS
 
-type benchmarkData map[int]time.Duration
+// year to duration
+type rowData map[string]time.Duration
+
+// day to years e.g 1 -> {2021: 1s, 2022: 2s}
+type tableData map[int]rowData
+
+var tData tableData
 
 func main() {
-	benchmarks, err := loadBenchmarks()
-	if err != nil {
-		panic(err)
-	}
-	table := getTable(benchmarks)
-	fmt.Print(table)
-	ioutil.WriteFile("README.md", []byte(table), 0644)
-}
-
-func getTable(benchmarks benchmarkData) string {
-	data := [][]string{}
-
-	totalRuntime := time.Duration(0)
-	for day, runtime := range benchmarks {
-		data = append(data, []string{fmt.Sprint(day), formatDuration(runtime)})
-		totalRuntime += runtime
-	}
-
-	sort.SliceStable(data, func(i, j int) bool {
-		return toInt(data[i][0]) < toInt(data[j][0])
-	})
-	data = append(data, []string{"Total", formatDuration(totalRuntime)})
-
 	tableString := &strings.Builder{}
 	table := tablewriter.NewWriter(tableString)
-	table.SetHeader([]string{"Day", "Runtime"})
+	headers := []string{"Day"}
+
 	table.SetBorders(tablewriter.Border{Left: true, Top: false, Right: true, Bottom: false})
 	table.SetCenterSeparator("|")
-	table.AppendBulk(data)
+
+	tData = make(tableData)
+
+	totalRuntimes := map[int]time.Duration{}
+	for _, y := range years {
+		yearString := strconv.FormatInt(int64(y), 10)
+		headers = append(headers, yearString)
+		totalRuntime, err := populateYearData(yearString)
+		if err != nil {
+			panic(err)
+		}
+		totalRuntimes[y] = totalRuntime
+	}
+	table.SetHeader(headers)
+	for i := 1; i <= 25; i++ {
+		day := i
+		data := tData[i]
+		dayString := strconv.FormatInt(int64(day), 10)
+		row := []string{dayString}
+		for _, t := range data {
+			row = append(row, formatDuration(t))
+		}
+		table.Append(row)
+	}
+	footerRow := []string{"Totals"}
+	for _, total := range totalRuntimes {
+		footerRow = append(footerRow, formatDuration(total))
+	}
+	table.Append(footerRow)
+
 	table.Render()
-	return tableString.String()
+	ioutil.WriteFile("README.md", []byte(tableString.String()), 0644)
+	fmt.Print(tableString.String())
 }
 
-func loadBenchmarks() (benchmarkData, error) {
-	benchmarks := benchmarkData{}
-
-	dayResults, err := resultsFS.ReadDir("results")
+func populateYearData(year string) (time.Duration, error) {
+	dayResults, err := resultsFS.ReadDir(path.Join("results", year))
 	if err != nil {
-		return nil, err
+		return time.Duration(0), err
 	}
+	totalDuration := time.Duration(0)
 	for _, dayResult := range dayResults {
 		day, err := strconv.Atoi(strings.TrimSuffix(dayResult.Name(), ".txt"))
 		if err != nil {
-			return nil, err
+			return time.Duration(0), err
 		}
-		path := fmt.Sprintf("results/%s", dayResult.Name())
+		path := fmt.Sprintf("results/%s/%s", year, dayResult.Name())
 		result, err := resultsFS.ReadFile(path)
 		if err != nil {
-			return nil, err
+			return time.Duration(0), err
 		}
 		benchmark, err := strconv.ParseFloat(strings.TrimSpace(string(result)), 64)
 		if err == nil {
-			benchmarks[day] = time.Duration(int64(math.Round(benchmark)))
+			if tData[day] == nil {
+				tData[day] = make(rowData)
+			}
+			duration := time.Duration(int64(math.Round(benchmark)))
+			totalDuration += duration
+			tData[day][year] = duration
 		}
 	}
-	return benchmarks, nil
+	return totalDuration, nil
 }
 
 func formatDuration(dur time.Duration) string {

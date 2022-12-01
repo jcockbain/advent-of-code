@@ -1,18 +1,23 @@
 #!/bin/bash
 
-d=${1:-$DAY}
-day=day${d}
+y=${1}
 
-if [ -z $day ]
+d=${2:-$DAY}
+day=day${d}
+day_path=${y}/${day}
+
+echo $day_path
+
+if [ -z ${d} ]
 then
   echo "Set \$DAY or pass day directory as an arg to test single file"
   # test all
-  go test ./...
-elif [ ! -d $day ]
+  go test ./${y}/...
+elif [ ! -d ${day_path} ]
 then
-  echo "$day is not a directory!"
+  echo "$day_path is not a directory!"
   exit 1
 else
   # test individual day
-  cd $day && go test
+  cd ${day_path} && go test
 fi
