@@ -14,14 +14,14 @@ Solutions to 2021 and 2022 Advent of code.
 To fetch the input, and create a template dir for each day: 
 
 ```shell
-./new_day 2021 {day1}
+./new_day {2022} {day1}
 ```
 
 To then run the solutions: 
 
 ```go
-// using day1 as an example
-cd day01
+// using 2022 day1 as an example
+cd 2022/day01
 
 // run the binary
 go run main.go
