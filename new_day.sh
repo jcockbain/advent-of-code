@@ -11,10 +11,10 @@ then DISPLAY_DAY="0${DAY}"
 else DISPLAY_DAY=$DAY
 fi
 
-GOROOT=day${DISPLAY_DAY}
+GOROOT=${YEAR}/day${DISPLAY_DAY}
 cp -n -R dayxx $GOROOT
 
-INPUT_URL="https://adventofcode.com/$YEAR/day/$DAY/input"
+INPUT_URL="https://adventofcode.com/${YEAR}/day/${DAY}/input"
 TEMP_INPUT="temp-input.txt"
 
 # "session cookie" must be given as input is per-user...
