@@ -13,8 +13,114 @@ var (
 	benchmark = false
 )
 
+const (
+	WinPoints  = 6
+	DrawPoints = 3
+	LossPoints = 0
+)
+
 //go:embed input.txt
 var input string
+
+type weapon interface {
+	score() int
+	fight(w weapon) int
+	// p2 - takes the char for the result and returns a weapon that would produce that res AGAINST this weapon
+	forceResult(inst string) weapon
+}
+
+func newWeapon(s string) weapon {
+	switch s {
+	case "R":
+		return rock{}
+	case "P":
+		return paper{}
+	case "S":
+		return scissors{}
+	}
+	panic("invalid weapon")
+}
+
+type rock struct{}
+
+func (r rock) score() int { return 1 }
+
+func (r rock) fight(w weapon) int {
+	switch w.(type) {
+	case paper:
+		return LossPoints
+	case scissors:
+		return WinPoints
+	default:
+		return DrawPoints
+	}
+}
+
+func (r rock) forceResult(inst string) weapon {
+	switch inst {
+	case "Z":
+		return paper{}
+	case "Y":
+		return rock{}
+	case "X":
+		return scissors{}
+	}
+	panic("invalid instruction")
+}
+
+type paper struct{}
+
+func (p paper) score() int { return 2 }
+
+func (p paper) fight(w weapon) int {
+	switch w.(type) {
+	case paper:
+		return DrawPoints
+	case scissors:
+		return LossPoints
+	default:
+		return WinPoints
+	}
+}
+
+func (p paper) forceResult(inst string) weapon {
+	switch inst {
+	case "Z":
+		return scissors{}
+	case "Y":
+		return paper{}
+	case "X":
+		return rock{}
+	}
+	panic("invalid instruction")
+}
+
+type scissors struct{}
+
+func (s scissors) score() int { return 3 }
+
+func (s scissors) fight(w weapon) int {
+	switch w.(type) {
+	case paper:
+		return WinPoints
+	case scissors:
+		return DrawPoints
+	default:
+		return LossPoints
+	}
+}
+
+func (s scissors) forceResult(inst string) weapon {
+	switch inst {
+	case "Z":
+		return rock{}
+	case "Y":
+		return scissors{}
+	case "X":
+		return paper{}
+	}
+	panic("invalid instruction")
+}
 
 func main() {
 	p1 := part1()
@@ -38,90 +144,25 @@ var youTurns = map[string]string{
 	"Z": "S",
 }
 
-var turnScores = map[string]int{
-	"R": 1,
-	"P": 2,
-	"S": 3,
-}
-
-var resScores = map[string]int{
-	"L": 0,
-	"D": 3,
-	"W": 6,
-}
-
-func part1() int {
+func part1() (sum int) {
 	turns := utils.GetLines(input)
-	sum := 0
-
 	for _, t := range turns {
 		turn := strings.Split(t, " ")
 		opp, you := turn[0], turn[1]
-		oppC := oppTurns[opp]
-		youC := youTurns[you]
-
-		if oppC == youC {
-			sum += resScores["D"]
-			sum += turnScores[youC]
-		} else {
-			if youC == "R" {
-				sum += turnScores["R"]
-				if oppC == "P" {
-					sum += resScores["L"]
-				} else {
-					sum += resScores["W"]
-				}
-			} else if youC == "P" {
-				sum += turnScores["P"]
-				if oppC == "S" {
-					sum += resScores["L"]
-				} else {
-					sum += resScores["W"]
-				}
-			} else {
-				sum += turnScores["S"]
-				if oppC == "R" {
-					sum += resScores["L"]
-				} else {
-					sum += resScores["W"]
-				}
-			}
-		}
+		oppWeapon, youWeapon := newWeapon(oppTurns[opp]), newWeapon(youTurns[you])
+		sum += youWeapon.score() + youWeapon.fight(oppWeapon)
 	}
-	return sum
+	return
 }
 
-func part2() int {
+func part2() (sum int) {
 	turns := utils.GetLines(input)
-	sum := 0
-
 	for _, t := range turns {
 		turn := strings.Split(t, " ")
-		opp, you := turn[0], turn[1]
-		oppC := oppTurns[opp]
-
-		if you == "Y" {
-			sum += resScores["D"]
-			sum += turnScores[oppC]
-		} else if you == "X" {
-			sum += resScores["L"]
-			if oppC == "P" {
-				sum += turnScores["R"]
-			} else if oppC == "R" {
-				sum += turnScores["S"]
-			} else {
-				sum += turnScores["P"]
-			}
-		} else {
-			sum += resScores["W"]
-			if oppC == "P" {
-				sum += turnScores["S"]
-			} else if oppC == "R" {
-				sum += turnScores["P"]
-			} else {
-				sum += turnScores["R"]
-			}
-		}
+		opp, instruction := turn[0], turn[1]
+		oppWeapon := newWeapon(oppTurns[opp])
+		youWeapon := oppWeapon.forceResult(instruction)
+		sum += youWeapon.score() + youWeapon.fight(oppWeapon)
 	}
-	return sum
+	return
 }
