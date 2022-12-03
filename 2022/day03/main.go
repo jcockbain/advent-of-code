@@ -57,17 +57,18 @@ func part2() (sum int) {
 }
 
 func getCommonItem(bags []string) int {
-	seenSet := map[rune]int{}
+	counter := map[rune]int{}
 	for _, s := range bags {
+		// so we only count object once per bag
 		seen := map[rune]struct{}{}
 		for _, c := range s {
 			if _, ok := seen[c]; !ok {
-				seenSet[c] += 1
+				counter[c] += 1
 				seen[c] = struct{}{}
 			}
 		}
 	}
-	for c, count := range seenSet {
+	for c, count := range counter {
 		if count == 3 {
 			return getRuneVal(c)
 		}
