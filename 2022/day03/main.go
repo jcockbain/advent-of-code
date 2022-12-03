@@ -25,13 +25,12 @@ func main() {
 	}
 }
 
-func part1() int {
+func part1() (sum int) {
 	bags := utils.GetLines(input)
-	sum := 0
 	for _, bag := range bags {
 		sum += getSharedValue(bag)
 	}
-	return sum
+	return
 }
 
 func getSharedValue(bag string) int {
@@ -49,14 +48,12 @@ func getSharedValue(bag string) int {
 	panic(fmt.Sprintf("invalid bag %v", bag))
 }
 
-func part2() int {
+func part2() (sum int) {
 	bags := utils.GetLines(input)
-	sum := 0
 	for i := 0; i < len(bags); i += 3 {
-		s := getCommonItem(bags[i : i+3])
-		sum += s
+		sum += getCommonItem(bags[i : i+3])
 	}
-	return sum
+	return
 }
 
 func getCommonItem(bags []string) int {
