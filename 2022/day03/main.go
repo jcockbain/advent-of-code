@@ -43,11 +43,7 @@ func getSharedValue(bag string) int {
 	}
 	for _, c := range bag2 {
 		if _, in := seenSet[c]; in {
-			if int(c) >= int('a') {
-				return 1 + int(c) - int('a')
-			} else {
-				return 27 + int(c) - int('A')
-			}
+			return getRuneVal(c)
 		}
 	}
 	panic(fmt.Sprintf("invalid bag %v", bag))
@@ -76,12 +72,15 @@ func getCommonItem(bags []string) int {
 	}
 	for c, count := range seenSet {
 		if count == 3 {
-			if int(c) >= int('a') {
-				return 1 + int(c) - int('a')
-			} else {
-				return 27 + int(c) - int('A')
-			}
+			return getRuneVal(c)
 		}
 	}
 	panic(fmt.Sprintf("invalid bags %v", bags))
+}
+
+func getRuneVal(c rune) int {
+	if int(c) >= int('a') {
+		return 1 + int(c) - int('a')
+	}
+	return 27 + int(c) - int('A')
 }
