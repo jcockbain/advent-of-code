@@ -58,7 +58,8 @@ func main() {
 		table.Append(row)
 	}
 	footerRow := []string{"Totals"}
-	for _, total := range totalRuntimes {
+	for _, year := range years {
+		total := totalRuntimes[year]
 		footerRow = append(footerRow, formatDuration(total))
 	}
 	table.Append(footerRow)
