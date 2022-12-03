@@ -1,7 +1,7 @@
 # 🎄 advent-of-code 🎄
 
-![Go](https://github.com/jcockbain/advent-of-code-2021/workflows/Go/badge.svg)
-![Go Report Card](https://goreportcard.com/badge/github.com/jcockbain/advent-of-code-2021)
+![Go](https://github.com/jcockbain/advent-of-code/workflows/Go/badge.svg)
+![Go Report Card](https://goreportcard.com/badge/github.com/jcockbain/advent-of-code)
 
 Solutions to 2021 and 2022 Advent of code. 
 
@@ -42,7 +42,7 @@ The results are found using a `BenchmarkMain` benchmark in each solution. This t
 |--------|--------|--------|
 |      1 | 182µs  | 89.8µs |
 |      2 | 568µs  | 616µs  |
-|      3 | 399µs  | 808µs  |
+|      3 | 399µs  | 818µs  |
 |      4 | 9.21ms |
 |      5 | 26.2ms |
 |      6 | 59.4µs |
@@ -65,4 +65,4 @@ The results are found using a `BenchmarkMain` benchmark in each solution. This t
 |     23 | 1.19s  |
 |     24 | 15.2µs |
 |     25 | 1.56s  |
-| Totals | 10.4s  | 1.61ms |
+| Totals | 10.4s  | 1.62ms |

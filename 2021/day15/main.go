@@ -10,7 +10,7 @@ import (
 
 	"container/heap"
 
-	"github.com/jcockbain/advent-of-code-2021/utils"
+	"github.com/jcockbain/advent-of-code/utils"
 )
 
 var (

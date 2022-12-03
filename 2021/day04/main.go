@@ -4,7 +4,7 @@ import (
 	_ "embed"
 	"strconv"
 
-	"github.com/jcockbain/advent-of-code-2021/utils"
+	"github.com/jcockbain/advent-of-code/utils"
 
 	"fmt"
 	"strings"

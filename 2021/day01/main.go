@@ -4,7 +4,7 @@ import (
 	_ "embed"
 	"fmt"
 
-	utils "github.com/jcockbain/advent-of-code-2021/utils"
+	utils "github.com/jcockbain/advent-of-code/utils"
 )
 
 var (
