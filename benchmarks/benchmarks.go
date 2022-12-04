@@ -63,7 +63,6 @@ func main() {
 		footerRow = append(footerRow, formatDuration(total))
 	}
 	table.Append(footerRow)
-
 	table.Render()
 	ioutil.WriteFile("README.md", []byte(tableString.String()), 0644)
 	fmt.Print(tableString.String())
