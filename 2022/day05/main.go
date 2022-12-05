@@ -49,41 +49,62 @@ func (cs *crateStack) push(r byte) {
 
 type stackMap map[int]*crateStack
 
-func newStackMap(stackList []string) (stackMap, int) {
+func (sm *stackMap) getStack(i int) *crateStack {
+	return (*sm)[i]
+}
+
+func (sm *stackMap) width() int {
+	m := 0
+	for i := range *sm {
+		if i > m {
+			m = i
+		}
+	}
+	return m
+}
+
+func newStackMap(stackList []string) stackMap {
+	sm := stackMap{}
 	stackNs := stackList[len(stackList)-1]
 	splitOnWs := strings.Fields(stackNs)
 	maxN := toInt(splitOnWs[len(splitOnWs)-1])
-	stackMap := map[int]*crateStack{}
-	padLength := len(stackNs) + 1
+	// pad the stack rows, so we can simply iterate upwards base
 	paddedStackList := make([]string, len(stackList)-1)
 	for i, st := range stackList[:len(stackList)-1] {
-		paddedStackList[i] = fmt.Sprintf("%-*s", padLength, st)
+		paddedStackList[i] = fmt.Sprintf("%-*s", len(stackNs)+1, st)
 	}
 	for i := 1; i <= maxN; i++ {
-		stackMap[i] = &crateStack{}
+		sm[i] = &crateStack{}
 		idx := 1 + (4 * (i - 1))
+		// iterate upwards
 		for j := len(stackList) - 2; j >= 0; j-- {
 			char := paddedStackList[j][idx]
 			if string(paddedStackList[j][idx]) != " " {
-				stackMap[i].push(char)
+				sm[i].push(char)
 			}
 		}
 	}
-	return stackMap, maxN
+	return sm
+}
+
+func (sm *stackMap) topRow() string {
+	res := strings.Builder{}
+	for i := 1; i <= sm.width(); i++ {
+		st := sm.getStack(i)
+		res.WriteByte(st.top())
+	}
+	return res.String()
 }
 
 func part1() string {
 	split := strings.Split(input, "\n\n")
 	stacks, moves := split[0], split[1]
-	stackList := strings.Split(stacks, "\n")
-	movesList := strings.Split(moves, "\n")
-	stackMap, maxN := newStackMap(stackList)
+	stackList, movesList := strings.Split(stacks, "\n"), strings.Split(moves, "\n")
+	movesList = movesList[:len(movesList)-1]
+	stackMap := newStackMap(stackList)
 
 	for _, move := range movesList {
 		parts := nRe.FindStringSubmatch(move)
-		if len(parts) < 4 {
-			continue
-		}
 		num, from, to := toInt(parts[1]), toInt(parts[2]), toInt(parts[3])
 		fromStack := stackMap[from]
 		toStack := stackMap[to]
@@ -92,27 +113,19 @@ func part1() string {
 		}
 	}
 
-	res := strings.Builder{}
-	for i := 1; i <= maxN; i++ {
-		st := stackMap[i]
-		res.WriteByte(st.top())
-	}
-
-	return res.String()
+	return stackMap.topRow()
 }
 
 func part2() string {
 	split := strings.Split(input, "\n\n")
 	stacks, moves := split[0], split[1]
-	stackList := strings.Split(stacks, "\n")
-	movesList := strings.Split(moves, "\n")
-	stackMap, maxN := newStackMap(stackList)
+	stackList, movesList := strings.Split(stacks, "\n"), strings.Split(moves, "\n")
+	movesList = movesList[:len(movesList)-1]
+	stackMap := newStackMap(stackList)
 
 	for _, move := range movesList {
+		// simply pop onto a temp stack (so the order is flipped twice and hence retained)
 		parts := nRe.FindStringSubmatch(move)
-		if len(parts) < 4 {
-			continue
-		}
 		num, from, to := toInt(parts[1]), toInt(parts[2]), toInt(parts[3])
 		fromStack := stackMap[from]
 		toStack := stackMap[to]
@@ -124,14 +137,7 @@ func part2() string {
 			toStack.push(extraStack.pop())
 		}
 	}
-
-	res := strings.Builder{}
-	for i := 1; i <= maxN; i++ {
-		st := stackMap[i]
-		res.WriteByte(st.top())
-	}
-
-	return res.String()
+	return stackMap.topRow()
 }
 
 func toInt(s string) int {
