@@ -34,7 +34,6 @@ func solve(msgLen int) int {
 
 func repeats(s string) bool {
 	set := map[rune]bool{}
-
 	for _, c := range s {
 		if _, ok := set[c]; ok {
 			return true
