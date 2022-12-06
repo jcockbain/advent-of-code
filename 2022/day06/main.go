@@ -14,8 +14,8 @@ var (
 var input string
 
 func main() {
-	p1 := part1()
-	p2 := part2()
+	p1 := solve(4)
+	p2 := solve(14)
 
 	if !benchmark {
 		fmt.Printf("Part 1: %d\n", p1)
@@ -23,19 +23,10 @@ func main() {
 	}
 }
 
-func part1() int {
-	for i := 0; i < len(input)-4; i++ {
-		if !repeats(input[i : i+4]) {
-			return i + 4
-		}
-	}
-	panic("no repeats")
-}
-
-func part2() int {
-	for i := 0; i < len(input)-14; i++ {
-		if !repeats(input[i : i+14]) {
-			return i + 14
+func solve(msgLen int) int {
+	for i := 0; i < len(input)-msgLen; i++ {
+		if !repeats(input[i : i+msgLen]) {
+			return i + msgLen
 		}
 	}
 	panic("no repeats")
