@@ -42,7 +42,7 @@ func main() {
 	}
 }
 
-func part1() int {
+func getRoot() *dir {
 	lines := utils.GetLines(input)
 	root := &dir{
 		children: map[string]*dir{},
@@ -77,8 +77,12 @@ func part1() int {
 			}
 		}
 	}
+	return root
+}
 
+func part1() int {
 	res := 0
+	root := getRoot()
 	var dfs func(n *dir) int
 	dfs = func(n *dir) int {
 		cumulative := 0
@@ -98,40 +102,7 @@ func part1() int {
 }
 
 func part2() int {
-	lines := utils.GetLines(input)
-	root := &dir{
-		children: map[string]*dir{},
-	}
-	current := root
-	for _, line := range lines[1:] {
-		if cdRe.Match([]byte(line)) {
-			parts := strings.Split(line, " ")
-			directive := parts[2]
-			switch directive {
-			case "..":
-				current = current.parent
-			default:
-				current = current.children[directive]
-			}
-		} else if line != "$ ls" {
-			split := strings.Split(line, " ")
-			first, second := split[0], split[1]
-			if first == "dir" {
-				d := dir{
-					name:     second,
-					parent:   current,
-					children: map[string]*dir{},
-				}
-				current.children[second] = &d
-			} else {
-				f := file{
-					name: second,
-					size: toInt(first),
-				}
-				current.files = append(current.files, &f)
-			}
-		}
-	}
+	root := getRoot()
 	allSizes := []int{}
 	var dfs func(n *dir) int
 	dfs = func(n *dir) int {
@@ -154,7 +125,7 @@ func part2() int {
 			return size
 		}
 	}
-	return targetToRemove
+	panic("something's gone wrong!")
 }
 
 func toInt(s string) int {
