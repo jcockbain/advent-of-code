@@ -40,15 +40,15 @@ The results are found using a `BenchmarkMain` benchmark in each solution. This t
 
 |  DAY   |  2021  |  2022  |
 |--------|--------|--------|
-|      1 | 89.8µs | 258µs  |
+|      1 | 258µs  | 89.8µs |
 |      2 | 568µs  | 422µs  |
 |      3 | 399µs  | 810µs  |
 |      4 | 9.21ms | 862µs  |
 |      5 | 26.2ms | 477µs  |
 |      6 | 59.4µs | 335µs  |
 |      7 | 29.5ms | 617µs  |
-|      8 | 2.16ms | 7.21ms |
-|      9 | 5.26ms |
+|      8 | 7.21ms | 2.16ms |
+|      9 | 5.26ms | 1.94ms |
 |     10 | 1.08ms |
 |     11 | 4.8ms  |
 |     12 | 280ms  |
@@ -65,4 +65,4 @@ The results are found using a `BenchmarkMain` benchmark in each solution. This t
 |     23 | 1.19s  |
 |     24 | 15.2µs |
 |     25 | 1.56s  |
-| Totals | 10.4s  | 11ms   |
+| Totals | 10.4s  | 12.9ms |
