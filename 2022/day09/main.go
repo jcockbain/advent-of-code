@@ -25,42 +25,28 @@ func (p *pos) add(p2 pos) {
 }
 
 func (p *pos) getTailPos(tailStart pos) pos {
-	dx := p.x - tailStart.x
-	dy := p.y - tailStart.y
+	dx, dy := p.x-tailStart.x, p.y-tailStart.y
 	if abs(dx) <= 1 && abs(dy) <= 1 {
 		return tailStart
 	}
-	if abs(dx) == 2 && abs(dy) == 2 {
-		if dx > 0 && dy > 0 {
-			return pos{p.x - 1, p.y - 1}
-		}
-		if dx > 0 && dy < 0 {
-			return pos{p.x - 1, p.y + 1}
-		}
-		if dx < 0 && dy > 0 {
-			return pos{p.x + 1, p.y - 1}
-		}
-		return pos{p.x + 1, p.y + 1}
-	}
-
+	cx, cy := 0, 0
 	if abs(dx) == 2 {
-		if dx > 0 {
-			return pos{p.x - 1, p.y}
+		switch dx > 0 {
+		case true:
+			cx = -1
+		case false:
+			cx = 1
 		}
-		return pos{p.x + 1, p.y}
 	}
 	if abs(dy) == 2 {
-		if dy > 0 {
-			return pos{p.x, p.y - 1}
+		switch dy > 0 {
+		case true:
+			cy = -1
+		case false:
+			cy = 1
 		}
-		return pos{p.x, p.y + 1}
-
 	}
-	panic(fmt.Sprintf("rope %v -> %v is f****d", p, tailStart))
-}
-
-func (p *pos) diff(p2 pos) pos {
-	return pos{abs(p2.x - p.x), abs(p2.y - p.y)}
+	return pos{p.x + cx, p.y + cy}
 }
 
 func abs(a int) int {
@@ -85,19 +71,7 @@ func part1() int {
 	visited := map[pos]struct{}{}
 	head, tail := pos{}, pos{}
 	for _, line := range lines {
-		spl := strings.Split(line, " ")
-		direction, distance := spl[0], toInt(spl[1])
-		var move pos
-		switch direction {
-		case "U":
-			move = pos{0, 1}
-		case "R":
-			move = pos{1, 0}
-		case "D":
-			move = pos{0, -1}
-		case "L":
-			move = pos{-1, 0}
-		}
+		move, distance := processMove(line)
 		for i := 0; i < distance; i++ {
 			head.add(move)
 			tail = head.getTailPos(tail)
@@ -113,19 +87,7 @@ func part2() int {
 	visited := map[pos]struct{}{}
 	knots := [10]pos{}
 	for _, line := range lines {
-		spl := strings.Split(line, " ")
-		direction, distance := spl[0], toInt(spl[1])
-		var move pos
-		switch direction {
-		case "U":
-			move = pos{0, 1}
-		case "R":
-			move = pos{1, 0}
-		case "D":
-			move = pos{0, -1}
-		case "L":
-			move = pos{-1, 0}
-		}
+		move, distance := processMove(line)
 		for i := 0; i < distance; i++ {
 			knots[0].add(move)
 			for j := 1; j < 10; j++ {
@@ -135,6 +97,23 @@ func part2() int {
 		}
 	}
 	return len(visited)
+}
+
+func processMove(s string) (pos, int) {
+	spl := strings.Split(s, " ")
+	direction, distance := spl[0], toInt(spl[1])
+	var move pos
+	switch direction {
+	case "U":
+		move = pos{0, 1}
+	case "R":
+		move = pos{1, 0}
+	case "D":
+		move = pos{0, -1}
+	case "L":
+		move = pos{-1, 0}
+	}
+	return move, distance
 }
 
 func printKnots(p [10]pos) {
