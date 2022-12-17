@@ -102,19 +102,14 @@ func part1() int {
 			if sandPos.y > maxY {
 				return sandGrains
 			}
-			nextSpot := false
 			for _, m := range movements {
 				finalPos := sandPos.add(m)
 				if posMap[finalPos] == 0 {
 					sandPos = finalPos
-					nextSpot = true
-					break
+					posMap[sandPos] = 2
+					settled = true
+					sandGrains++
 				}
-			}
-			if nextSpot == false {
-				posMap[sandPos] = 2
-				settled = true
-				sandGrains++
 			}
 		}
 	}
