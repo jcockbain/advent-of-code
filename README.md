@@ -41,19 +41,19 @@ The results are found using a `BenchmarkMain` benchmark in each solution. This t
 |  DAY   |  2021  |  2022  |
 |--------|--------|--------|
 |      1 | 89.8µs | 233µs  |
-|      2 | 427µs  | 568µs  |
-|      3 | 399µs  | 807µs  |
-|      4 | 9.21ms | 853µs  |
-|      5 | 445µs  | 26.2ms |
-|      6 | 59.4µs | 334µs  |
-|      7 | 29.5ms | 502µs  |
-|      8 | 7.24ms | 2.16ms |
+|      2 | 424µs  | 568µs  |
+|      3 | 399µs  | 821µs  |
+|      4 | 9.21ms | 855µs  |
+|      5 | 447µs  | 26.2ms |
+|      6 | 59.4µs | 333µs  |
+|      7 | 504µs  | 29.5ms |
+|      8 | 2.16ms | 7.13ms |
 |      9 | 5.26ms | 1.9ms  |
-|     10 | 1.08ms | 29.6µs |
-|     11 | 4.8ms  | 23µs   |
-|     12 | 280ms  | 268ms  |
+|     10 | 1.08ms | 29µs   |
+|     11 | 4.8ms  | 19.9µs |
+|     12 | 280ms  | 247ms  |
 |     13 | 1.31ms |
-|     14 | 744µs  |
+|     14 | 744µs  | 86.3ms |
 |     15 | 1.36s  |
 |     16 | 239µs  |
 |     17 | 2.05ms |
@@ -65,4 +65,4 @@ The results are found using a `BenchmarkMain` benchmark in each solution. This t
 |     23 | 1.19s  |
 |     24 | 15.2µs |
 |     25 | 1.56s  |
-| Totals | 10.4s  | 281ms  |
+| Totals | 10.4s  | 346ms  |
